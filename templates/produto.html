@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos{% endblock %}
+
+{% block content %}
+<div class="container product-main">
+        <header>
+            <h1>Criar Produto</h1>
+            <p class="subtitle">Selecione os itens (insumos) e defina as quantidades para compor o produto.</p>
+        </header>
+
+        <main>
+            <!-- Busca -->
+            <section class="card">
+                <div class="section-header">
+                    <h2><span class="step">1</span> Buscar e selecionar itens</h2>
+                    <div style="display:flex; gap:.5rem; align-items:center;">
+                        <input id="searchInput" type="text" placeholder="Pesquisar item por nome ou código..."
+                            class="quantidade-input" style="width:260px;">
+                        <button id="clearSearch" class="btn btn-secondary">Limpar</button>
+                    </div>
+                </div>
+
+                <div id="itensList" class="insumos-container">
+                    <!-- lista dinâmica de itens -->
+                </div>
+                <div id="itensList" class="insumos-container"></div>
+                <div id="paginationBar" class="pagination">
+                    <button id="prevPage" class="btn btn-secondary" disabled>Anterior</button>
+                    <span id="pageInfo" class="page-info">Página 1</span>
+                    <button id="nextPage" class="btn btn-secondary">Próxima página</button>
+                </div>
+            </section>
+
+            <!-- Selecionados -->
+            <section class="card selected-insumos">
+                <div class="section-header">
+                    <h2><span class="step">2</span> Insumos selecionados</h2>
+                    <div class="total-cost">Total: <span id="totalValor">R$ 0,00</span></div>
+                </div>
+
+                <div class="table-container">
+                    <table id="selecionadosTable">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Un</th>
+                                <th>V. Unitário</th>
+                                <th>Qtde</th>
+                                <th>Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- linhas dinâmicas --></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Dados do produto -->
+            <section class="card">
+                <h2><span class="step">3</span> Dados do produto</h2>
+                <div class="form-group">
+                    <label for="nomeProduto">Nome do produto</label>
+                    <input type="text" id="nomeProduto" placeholder="Ex.: Conjunto XYZ" />
+                </div>
+
+                <div class="form-actions">
+                    <a href="/" class="btn btn-secondary">Voltar</a>
+                    <button id="btnSalvarProduto" class="btn btn-primary">Salvar Produto</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="/static/js/pages/produto.js"></script>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

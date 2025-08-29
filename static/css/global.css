@@ -1,0 +1,116 @@
+*{
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+    border: none;
+    text-decoration: none;
+    /* background-color: transparent; */
+}
+
+:root{
+
+    /* Color */
+    --black:#000000;
+    --black_10:rgba(0,0,0,0.10);
+    --black_40:rgba(0,0,0,0.40);
+
+    --boulder: #777777;
+
+    --cod_gray:#111111;
+    --cod_gray_50:rgba(17,17,17,0.50);
+    
+    --dune:#2E2928;
+    
+    --crimson:#EE181E;
+    --thunderbird:#BB1217;
+    
+    --deep_sea_green:#095E54;
+    --emerald:#4FCE5D;
+    --harlequin:#4AD504;
+    --mountain_meadow:#22C15D;
+    
+    --dusty_gray: #9B9B9B;
+    --shark:#303133;
+    --thunder: #231F20;
+    
+    --mercury:#EAEAEA;
+    --white:#FFFFFF;
+    --pearl_bush: #E6DDD4;
+    --white_15:rgba(255,255,255,0.15);
+    --white_25:rgba(255,255,255,0.25);
+    --white_40:rgba(255,255,255,0.40);
+    --white_50: rgba(255,255,255,0.50);
+    --white_woodsmoke:rgba(255,255,255,1);
+    --wild_sand: #F7F7F7;
+    --woodsmoke: #161616;
+    
+    --maven: font-family: "Maven Pro", sans-serif;
+    --inter: font-family: "Inter", sans-serif;
+    --jost: font-family: "Jost", sans-serif;
+    --roboto: font-family: "Roboto", sans-serif;
+    --barlow: font-family: "Barlow", sans-serif;
+}
+
+body{
+    background-color: var(--wild_sand);
+}
+
+.logo{
+    /* margin: 14px 0 14px 72px; */
+    padding-left: 72px;
+}
+
+.navbar-links{
+    gap: 28px;
+    font:(var(--maven));
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 13px;
+    text-transform: uppercase;
+    color: var(--white);
+
+}
+
+.navbar-links>li>a:hover{
+    color: var(--thunder);
+    transition-delay: 0.1s;
+}
+
+.menu-mobile{
+   /* border: 1px solid red; */
+   border-radius: 20px 0 0px 20px;
+   color: var(--thunder);
+   text-align: end;
+     font:(var(--maven));
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 13px;
+    text-transform: uppercase;
+    background-color: var(--wild_sand);
+    width: 40%;
+    height: 100%;
+}
+
+.menu-mobile>div>a:hover{
+     color: var(--dusty_gray);
+    transition-delay: 0.1s;
+}
+
+@media(max-width:1024px){
+    .navbar-links{
+        gap: 18px;
+        font-size: 10px;
+    }
+}
+@media(max-width:768px){
+    .menu-mobile{
+        width: 50%;
+    }
+}
+@media(max-width:480px){
+    .menu-mobile{
+        width: 90%;
+        height: auto;
+    }
+}

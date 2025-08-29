@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NFe>
+  <infNFe Id="NFe00000000000000000000000000000000000000000000" versao="4.00">
+    <emit>
+      <CNPJ>67307278000131</CNPJ>
+      <xNome>NASA ISOLANTES ELÉTRICOS LTDA</xNome>
+      <enderEmit>
+        <xLgr>RUA LUIZ ANTONIO DE ANDRADE VIEIRA</xLgr>
+        <nro>1225</nro>
+        <xBairro>JD GUACIARA</xBairro>
+        <cMun>3552809</cMun>
+        <xMun>TABOAO DA SERRA</xMun>
+        <UF>SP</UF>
+        <CEP>06786370</CEP>
+        <fone>1141383872</fone>
+      </enderEmit>
+      <IE>675073279115</IE>
+    </emit>
+    <dest>
+      <CNPJ>68330141000106</CNPJ>
+      <xNome>M.C.M. BOBINAS IND. COM. IMP. E EXP. LTDA</xNome>
+      <enderDest>
+        <xLgr>RUA LUIZ JOSÉ SANGALETTI</xLgr>
+        <nro>2029</nro>
+        <xBairro>DISTRITO INDUSTRIAL</xBairro>
+        <cMun>3536703</cMun>
+        <xMun>PEDERNEIRAS</xMun>
+        <UF>SP</UF>
+        <CEP>17284602</CEP>
+        <fone>1432844077</fone>
+      </enderDest>
+      <IE>515017121116</IE>
+    </dest>
+    <det nItem="1">
+      <prod>
+        <cProd>000487</cProd>
+        <xProd>VERNIZ ASA 924 VERDE</xProd>
+        <CFOP>5101</CFOP>
+        <uCom>LT</uCom>
+        <qCom>4.0000</qCom>
+        <vUnCom>780.0000</vUnCom>
+        <vProd>3120.00</vProd>
+        <uTrib>LT</uTrib>
+        <qTrib>4.0000</qTrib>
+        <vUnTrib>780.0000</vUnTrib>
+      </prod>
+    </det>
+    <det nItem="2">
+      <prod>
+        <cProd>000487</cProd>
+        <xProd>VERNIZ ASA 924 AMARELO</xProd>
+        <CFOP>5101</CFOP>
+        <uCom>LT</uCom>
+        <qCom>4.0000</qCom>
+        <vUnCom>780.0000</vUnCom>
+        <vProd>3120.00</vProd>
+        <uTrib>LT</uTrib>
+        <qTrib>4.0000</qTrib>
+        <vUnTrib>780.0000</vUnTrib>
+      </prod>
+    </det>
+    <det nItem="3">
+      <prod>
+        <cProd>000487</cProd>
+        <xProd>VERNIZ ASA 924 LARANJA</xProd>
+        <CFOP>5101</CFOP>
+        <uCom>LT</uCom>
+        <qCom>4.0000</qCom>
+        <vUnCom>780.0000</vUnCom>
+        <vProd>3120.00</vProd>
+        <uTrib>LT</uTrib>
+        <qTrib>4.0000</qTrib>
+        <vUnTrib>780.0000</vUnTrib>
+      </prod>
+    </det>
+    <total>
+      <ICMSTot>
+        <vProd>9320.00</vProd>
+        <vNF>9320.00</vNF>
+      </ICMSTot>
+    </total>
+  </infNFe>
+</NFe>

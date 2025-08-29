@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Listar Itens{% endblock %}
+{% block content %}
+<div class="container product-main">
+  <header>
+    <h1>Listar Itens</h1>
+    <p class="subtitle">Itens cadastrados na coleção <code>itens</code>. Edite valores ou apague registros.</p>
+  </header>
+
+  <section class="card">
+    <div class="section-header">
+      <h2><span class="step">1</span> Buscar</h2>
+      <div class="search-group">
+        <input id="searchInput" class="form-control" placeholder="Buscar por nome ou código..." />
+        <button id="clearSearch" class="btn btn-secondary ms-2" type="button">Limpar</button>
+      </div>
+    </div>
+    <div id="statusBar" class="text-muted small" style="min-height:1.25rem;"></div>
+    <div class="table-responsive">
+      <table id="itensTable" class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>Unidade</th>
+            <th>Valor Unitário (R$)</th>
+            <th>Data Emissão</th>
+            <th style="width:120px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div id="pageInfo" class="small text-muted"></div>
+      <div class="btn-group">
+        <button id="prevPage" class="btn btn-secondary" type="button" disabled>Anterior</button>
+        <button id="nextPage" class="btn btn-secondary" type="button" disabled>Próxima</button>
+      </div>
+    </div>
+  </section>
+
+<!-- Modal Confirmar Edição -->
+<div class="modal fade model-itens-edit" id="modalEditItem" tabindex="-1" aria-labelledby="modalEditItemLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditItemLabel">Confirmar alterações</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Deseja salvar as alterações deste item?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmSave">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Exclusão -->
+<div class="modal fade model-itens-delete" id="modalDeleteItem" tabindex="-1" aria-labelledby="modalDeleteItemLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDeleteItemLabel">Confirmar exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja apagar este item?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDelete">Apagar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Custom Modal: Edit (model-itens-edit) -->
+<div class="custom-modal-overlay model-itens-edit" id="cmEdit" aria-hidden="true">
+  <div class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="cmEditTitle">
+    <div class="header" id="cmEditTitle">Confirmar alterações</div>
+    <div class="body">Deseja salvar as alterações deste item?</div>
+    <div class="footer">
+      <button type="button" class="custom-btn secondary" data-cm-action="close">Cancelar</button>
+      <button type="button" class="custom-btn primary" id="cmEditConfirm">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Modal: Delete (model-itens-delete) -->
+<div class="custom-modal-overlay model-itens-delete" id="cmDelete" aria-hidden="true">
+  <div class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="cmDeleteTitle">
+    <div class="header" id="cmDeleteTitle">Confirmar exclusão</div>
+    <div class="body">Tem certeza que deseja apagar este item?</div>
+    <div class="footer">
+      <button type="button" class="custom-btn secondary" data-cm-action="close">Cancelar</button>
+      <button type="button" class="custom-btn danger" id="cmDeleteConfirm">Apagar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/static/js/pages/listar_itens.js"></script>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Confirmar ação</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body" id="confirmMessage">Tem certeza?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+  
+<!-- Custom Modal: Edit (model-itens-edit) -->
+<div class="custom-modal-overlay model-itens-edit" id="cmEdit" aria-hidden="true">
+  <div class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="cmEditTitle">
+    <div class="header" id="cmEditTitle">Confirmar alterações</div>
+    <div class="body">Deseja salvar as alterações deste item?</div>
+    <div class="footer">
+      <button type="button" class="custom-btn secondary" data-cm-action="close">Cancelar</button>
+      <button type="button" class="custom-btn primary" id="cmEditConfirm">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Modal: Delete (model-itens-delete) -->
+<div class="custom-modal-overlay model-itens-delete" id="cmDelete" aria-hidden="true">
+  <div class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="cmDeleteTitle">
+    <div class="header" id="cmDeleteTitle">Confirmar exclusão</div>
+    <div class="body">Tem certeza que deseja apagar este item?</div>
+    <div class="footer">
+      <button type="button" class="custom-btn secondary" data-cm-action="close">Cancelar</button>
+      <button type="button" class="custom-btn danger" id="cmDeleteConfirm">Apagar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/static/js/pages/listar_itens.js"></script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}calcl{% endblock %}
+
+{% block content %}
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vermelho: '#B91C1C',
+            preto: '#111827',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-preto text-white font-sans min-h-screen">
+
+  <!-- 🔝 Navbar -->
+  <nav class="bg-vermelho px-6 py-4 flex justify-between items-center shadow-md">
+    <h1 class="text-xl font-bold tracking-wide">MCM Bobinas</h1>
+    <ul class="flex space-x-6 text-sm font-medium">
+      <li><a href="#" class="hover:underline">UPLOAD NOTA FISCAL</a></li>
+      <li><a href="#" class="hover:underline">CADASTRO MANUAL</a></li>
+      <li><a href="#" class="hover:underline">CALCULADORA</a></li>
+      <li><a href="#" class="hover:underline">PRODUTOS FINAIS</a></li>
+      <li><a href="#" class="hover:underline">MATÉRIAS-PRIMAS</a></li>
+    </ul>
+  </nav>
+
+  <!-- 📊 Seção Principal -->
+  <main class="flex flex-col items-center justify-center text-center px-6 py-20">
+    <h2 class="text-3xl font-bold mb-4">Calculadora de Custo</h2>
+    <p class="text-gray-300 max-w-xl mb-8">
+      Descubra o verdadeiro custo da matéria-prima que compõe sua produção e ajuste sua estratégia de preços.
+    </p>
+    <a href="#" class="bg-vermelho hover:bg-red-700 text-white font-semibold px-6 py-3 rounded shadow-lg transition">
+      CALCULAR
+    </a>
+  </main>
+
+  <!-- 📎 Rodapé (opcional) -->
+  <footer class="bg-gray-900 text-gray-400 text-sm text-center py-4">
+    &copy; {{ ano_atual }} MCM Bobinas. Todos os direitos reservados.
+  </footer>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
