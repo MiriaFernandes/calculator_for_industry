@@ -22,60 +22,58 @@
   <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
 </head>
 
-<body>
-  <header class="bg-gray-900 px-6 py-3 app-navbar nav-link">
+<body class="flex flex-col min-h-screen">
+  <header class="absolute top-0 left-0 right-0 z-50 bg-transparent px-6 py-3 app-navbar nav-link">
+  <!-- Menu desktop -->
+  <nav class="flex items-center justify-between">
+    <img src="/static/image/logotipo-mcm.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
 
-    <!-- Menu desktop -->
-    <nav class="flex items-center justify-between">
-      <img src="/static/image/logotipo-mcm.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
+    <ul class="hidden lg:flex space-x-6 navbar-links text-white">
+      <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+      <li><a>Upload Nota Fiscal</a></li>
+      <li><a href="#">Cadastro Manual</a></li>
+      <li><a href="#">Calculadora</a></li>
+      <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li>
+      <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
+    </ul>
 
-      <ul class="hidden lg:flex space-x-6 navbar-links">
-        <li><a href="{{ url_for('index') }}">Dashboard</a></li>
-        <li><a>Upload Nota Fiscal</a></li>
-        <li><a href="#">Cadastro Manual</a></li>
-        <li><a href="#">Calculadora</a></li>
-        <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li>
-        <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
-      </ul>
+    <div class="flex items-center space-x-4">
+      <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hidden lg:block"
+        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M5.121 17.804A9.004 9.004 0 0112 15c2.21 0 4.21.805 5.879 2.121M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
 
-      <div class="flex items-center space-x-4">
-        <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hidden lg:block"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5.121 17.804A9.004 9.004 0 0112 15c2.21 0 4.21.805 5.879 2.121M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      <button id="menu-toggle" class="lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
+      </button>
+    </div>
+  </nav>
 
-        <button id="menu-toggle" class="lg:hidden">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-    </nav>
+  <!-- Menu mobile -->
+  <nav id="mobile-menu"
+    class="lg:hidden hidden fixed top-0 right-0 flex flex-col p-6 space-y-6 shadow-lg z-50 menu-mobile">
+    <div class="flex justify-end">
+      <button id="menu-close" class="text-2xl font-bold">
+        &times;
+      </button>
+    </div>
 
-    <!--Menu mobile -->
-    <nav id="mobile-menu"
-      class="lg:hidden hidden fixed top-0 right-0   flex flex-col p-6 space-y-6 shadow-lg z-50 menu-mobile">
+    <div class="flex flex-col space-y-4 text-sm font-medium">
+      <a href="#">Dashboard</a>
+      <a href="#">Upload Nota Fiscal</a>
+      <a href="#">Cadastro Manual</a>
+      <a href="#">Calculadora</a>
+      <a href="#">Produtos Finais</a>
+      <a href="#">Matérias-Primas</a>
+      <a href="#" id="open-modal-mobile" class="hover:text-gray-300 font-semibold transition">Sign In</a>
+    </div>
+  </nav>
+</header>
 
-      <div class="flex justify-end">
-        <button id="menu-close" class="text-2xl font-bold">
-          &times;
-        </button>
-      </div>
-
-
-      <div class="flex flex-col space-y-4 text-sm font-medium">
-        <a href="#">Dashboard</a>
-        <a href="#">Upload Nota Fiscal</a>
-        <a href="#">Cadastro Manual</a>
-        <a href="#">Calculadora</a>
-        <a href="#">Produtos Finais</a>
-        <a href="#">Matérias-Primas</a>
-        <a href="#" id="open-modal-mobile" class="hover:text-gray-600 font-semibold transition">Sign In</a>
-      </div>
-    </nav>
-  </header>
 
   <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white text-black w-[90%] max-w-md p-6 rounded-lg shadow-lg relative">
@@ -94,16 +92,78 @@
 
 
 
-  <div class="container py-4">
+  <main class="{% block main_classes %}max-w-7xl mx-auto px-4{% endblock %}">
     {% block content %}{% endblock %}
-  </div>
+  </main>
+
+
+  <footer class="text-white mt-auto w-full" role="contentinfo" aria-label="Rodapé da MCM Bobinas">
+    <div
+      class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+
+      <!-- Coluna da esquerda: Logo + Endereço -->
+      <div class="text-center md:text-center lg:text-left md:max-w-sm w-full">
+        <div class="flex flex-col items-center md:items-center lg:items-start gap-2 w-full">
+          <!-- Logo -->
+          <div class="flex items-center gap-2 text-white">
+            <img src="/static/image/logotipo-mcm.svg" alt="Logotipo MCM Bobinas" class="h-10 w-auto">
+          </div>
+
+          <!-- Endereço -->
+          <address class="not-italic leading-snug footer-address md:text-center lg:text-left">
+            Endereço: R. Luiz José Sangaletti, 2.029 – Pq.<br />
+            Industrial Fuad Razuk – Pederneiras (SP)
+          </address>
+        </div>
+      </div>
+
+      <!-- Coluna da direita: Explore + ícones -->
+      <div class="flex flex-col items-center md:items-center gap-8">
+        <h3 class="explore-title">Explore</h3>
+        <nav class="flex gap-3" aria-label="Links de navegação do rodapé">
+          <a href="#"
+            class="p-3.5 footer-button-nav rounded-full hover:bg-neutral-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            aria-label="Calculadora" title="Calculadora">
+            <img src="/static/image/icon-calculator.svg" alt="Ícone de Calculadora">
+          </a>
+          <a href="#"
+            class="p-3.5 footer-button-nav rounded-full hover:bg-neutral-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            aria-label="Relatórios" title="Relatórios">
+            <img src="/static/image/icon-forms.svg" alt="Ícone de Relatório">
+          </a>
+          <a href="#"
+            class="p-3.5 footer-button-nav rounded-full hover:bg-neutral-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            aria-label="Upload" title="Upload">
+            <img src="/static/image/icon-upload.svg" alt="Ícone de Upload">
+          </a>
+          <a href="#"
+            class="p-3.5 footer-button-nav rounded-full hover:bg-neutral-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            aria-label="Produtos" title="Produtos">
+            <img src="/static/image/icon-box.svg" alt="Ícone de Produtos">
+          </a>
+        </nav>
+      </div>
+
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center text-xs py-4 copyright">
+      <p>Copyright ©2025 JMR. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+
+
+
+
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='js/pages/menu.js') }}"></script>
 
   {% block scripts %}
   <script>
-     (function () {
+    (function () {
       const path = window.location.pathname.replace(/\/$/, "");
       document.querySelectorAll(".app-navbar .nav-link").forEach(a => {
         try {

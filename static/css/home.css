@@ -1,0 +1,52 @@
+@import url("./global.css");
+
+.home {
+    background-image: url("../image/bg-home.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* background-color: red; */
+}
+
+.hero-content {
+    color: var(--white);
+}
+
+.hero-content>h1 {
+    font-family: "Maven Pro", sans-serif;
+    font-weight: 600;
+    font-size: 60px;
+
+}
+
+.hero-content>p {
+    font-family: "Just", sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+
+}
+
+.home-button {
+    font-family: "Just", sans-serif;
+    padding: 15px 35px;
+    background-color: var(--thunderbird);
+    border-radius: 130px;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.home-button:hover {
+    background-color: var(--crimson);
+}
+
+@media(max-width:1024px) {
+    .hero-content>p  {
+        font-size: 15px;
+    }
+}
+
+@media(max-width:768px){
+   .hero-content>h1{
+        font-size: 45px;
+    }
+}

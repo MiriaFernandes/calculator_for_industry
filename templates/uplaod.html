@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Início{% endblock %}
+
+{% block content %}
+<div class="container">
+        <header>
+            <h1>Gestão ddasasdasdae Produtos</h1>
+            <p class="subtitle">Crie produtos a partir de insumos de notas fiscais</p>
+        </header>
+
+        <main>
+            <section class="upload-section card">
+                <h2><span class="step">1</span> Carregar Nota Fiscal</h2>
+                <form id="uploadForm" class="upload-form">
+                    <div class="file-input-container">
+                        <label for="xmlFile" class="file-label">
+                            <span id="fileName">Selecione um arquivo XML</span>
+                            <input type="file" id="xmlFile" accept=".xml" required class="file-input">
+                            <span class="file-button">Escolher Arquivo</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-secondary ">Processar XML</button>
+                </form>
+                <div id="loading" class="loading-container hidden">
+                    <div class="spinner"></div>
+                    <p>Processando XML...</p>
+                </div>
+            </section>
+
+            <section id="itensContainer" class="card hidden">
+                <div class="section-header">
+                    <h2><span class="step">2</span> Itens da Nota Fiscal</h2>
+                    <div>
+                        <button id="btnCriarProduto" class=" btn btn-secondary">Criar Novo Produto</button>
+                        <!-- novo botão -->
+                        <button id="btnFecharNota" class="btn btn-secondary remove-btn hidden">Fechar Nota fiscal</button>
+                    </div>
+                </div>
+
+                <button id="btnEnviarItens" class="btn btn-secondary send-btn hidden" style="margin-bottom: 1rem;">
+                    Enviar itens para o banco de dados
+                </button>
+                <div class="table-container">
+                    <table id="itensTable">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Unidade</th>
+                                <th>Valor Unitário</th>
+                                <th>Quantidade</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="produtosCriados" class="card hidden">
+                <h2>Produtos Criados Recentemente</h2>
+                <div id="produtosList" class="grid-container"></div>
+            </section>
+            <div id="modalDuplicata" class="modal hidden">
+                <div class="modal-content">
+                    <h3>Não foi possível enviar</h3>
+                    <p>Foram encontrados itens já cadastrados com o mesmo <strong>valor_unitário</strong> e
+                        <strong>data_emissão</strong>:
+                    </p>
+                    <ul id="modalLista"></ul>
+                    <div class="modal-actions">
+                        <button id="modalFechar" class="btn btn-primary">Entendi</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal (namespaced): confirmar fechar nota -->
+            <div id="nfCloseModal" class="nf-modal nf-modal--backdrop hidden" aria-hidden="true" role="dialog"
+                aria-modal="true">
+                <div class="nf-modal__content" role="document">
+                    <h3 class="nf-modal__title">Fechar Nota fiscal?</h3>
+                    <p class="nf-modal__text">Isso vai limpar a tabela e remover os itens salvos desta NF.</p>
+
+                    <div class="nf-modal__actions">
+                        <button id="nfCloseCancel" class="btn btn-secondary" type="button">Cancelar</button>
+                        <button id="nfCloseConfirm" class="btn nf-btn-danger" type="button">Fechar</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script type="module" src="/static/js/pages/index.js"></script>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

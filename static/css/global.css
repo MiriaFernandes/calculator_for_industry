@@ -51,6 +51,7 @@
     --roboto: font-family: "Roboto", sans-serif;
     --barlow: font-family: "Barlow", sans-serif;
 }
+html, body { overflow-x: clip; } /* ou hidden */
 
 body{
     background-color: var(--wild_sand);
@@ -61,6 +62,11 @@ body{
     padding-left: 72px;
 }
 
+.app-navbar,
+.nav-link,
+.navbar-links {
+  background: transparent !important;
+}
 .navbar-links{
     gap: 28px;
     font:(var(--maven));
@@ -73,7 +79,7 @@ body{
 }
 
 .navbar-links>li>a:hover{
-    color: var(--thunder);
+    color: var(--dusty_gray);
     transition-delay: 0.1s;
 }
 
@@ -96,7 +102,37 @@ body{
      color: var(--dusty_gray);
     transition-delay: 0.1s;
 }
+footer{
+    background-color: var(--dune);
+}
 
+.footer-address{
+    color: var(--white);
+   font-family: "Jost", sans-serif;
+   font-weight: 500;
+   font-size: 16px;
+   text-align: end;
+}
+
+.explore-title{
+    color: var(--white);
+    text-align: center;
+    font-family: "Jost", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.footer-button-nav{
+    background-color: var(--shark);
+}
+
+.copyright{
+    font-family: "Jost", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--mercury);
+
+}
 @media(max-width:1024px){
     .navbar-links{
         gap: 18px;
