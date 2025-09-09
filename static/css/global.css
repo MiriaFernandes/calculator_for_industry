@@ -102,7 +102,7 @@ body{
      color: var(--dusty_gray);
     transition-delay: 0.1s;
 }
-footer{
+.footer-base{
     background-color: var(--dune);
 }
 

@@ -31,54 +31,118 @@
 
 <!-- WRAPPER FULL-BLEED: ocupa a largura total mesmo dentro de um main com max-w -->
 <!-- FULL-BLEED sem overflow -->
-<section class="relative mx-[calc(50%-50vw)] w-[100vw] overflow-x-clip py-10 sm:py-12 bg-transparent">
-  <div class="w-full px-4 sm:px-6">
-    <div class="rounded-[24px] bg-white ring-1 ring-neutral-200 shadow-[0_6px_24px_rgba(0,0,0,0.08)]">
-      
-      <!-- Cabeçalho -->
-      <header class="flex items-center justify-between gap-4 p-5 sm:p-7 border-b border-neutral-200">
-        <div class="flex items-center gap-3 sm:gap-4">
-          <img src="/static/image/illustration-calc (1).svg" alt="Mascote da Calculadora" class="h-16 sm:h-20 md:h-24 lg:h-28 w-auto shrink-0"
->
+<section class="relative mx-[calc(50%-50vw)] w-[100vw] overflow-x-clip py-10 sm:py-12 bg-transparent calc-container">
+    <div class="px-4 sm:px-6">
+        <div class="ring-1 bg-white rounded-xl shadow calc-content">
+
+            <!-- Cabeçalho -->
+            <header class="flex items-center justify-between gap-4 p-4 sm:p-7">
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <img src="/static/image/illustration-calc (1).svg" alt="Mascote da Calculadora"
+                        class="h-16 sm:h-20 md:h-24 lg:h-28 w-auto shrink-0" />
+                </div>
+
+                <!-- Botão para abrir modal -->
+                <button type="button"
+                    class="btn-materia-prima inline-flex items-center gap-2 text-xs uppercase tracking-wide hover:text-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-full">
+                    <p>Adicionar matéria-prima</p>
+                    <span><img src="/static/image/icon-plus.svg" alt="Ícone de adicionar" /></span>
+                </button>
+            </header>
+
+            <!-- Tabela de insumos selecionados -->
+            <div class="overflow-x-auto px-5 sm:px-7 mb-10">
+                <table id="selecionadosTable" class="min-w-full border border-gray-300 text-sm">
+
+                    <tbody>
+                        <div id="manualCards" class="px-5 sm:px-7 mb-10 space-y-4">
+                            <!-- Os cards aparecerão aqui -->
+                        </div>
+                        <!-- Linhas renderizadas via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- 🔘 Botão externo que abre o modal -->
+            <div class="px-5 sm:px-7 mb-10">
+                <button id="abrirSalvarModal"
+                    class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition font-semibold w-full sm:w-auto">
+                    Salvar Produto
+                </button>
+                 <div class="text-lg font-semibold text-red-600">
+                            Total: <span id="totalValor">R$ 0,00</span>
+                        </div>
+            </div>
+
+            <!-- 🔐 Modal de salvar produto -->
+            <!-- 🔐 Modal de salvar produto -->
+            <div id="modal-salvar-produto"
+                class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white w-[90%] max-w-xl p-6 rounded-lg shadow-lg relative">
+
+                    <!-- ❌ Botão de fechar -->
+                    <button id="close-salvar-modal"
+                        class="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-gray-900">
+                        &times;
+                    </button>
+
+                    <!-- 🧾 Cabeçalho -->
+                    <h2 class="text-lg font-semibold mb-6">Salvar Produto</h2>
+
+                    <!-- Nome do produto + total -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-6 mb-6">
+                        <input id="nomeProduto" type="text" placeholder="Nome do produto"
+                            class="border border-gray-300 rounded px-4 py-2 w-full sm:w-1/2" />
+                       
+                    </div>
+
+                    <!-- Botão interno que realmente salva -->
+                    <div>
+                        <button id="btnSalvarProduto"
+                            class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition font-semibold w-full sm:w-auto">
+                            Salvar Produto
+                        </button>
+                    </div>
+
+                </div>
+            </div>
         </div>
-
-        <button type="button"
-          class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-wide text-neutral-600 hover:text-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-full">
-          <span class="uppercase">Adicionar matéria-prima</span>
-          <span class="grid place-content-center h-6 w-6 rounded-full bg-red-600 text-white text-base leading-none">+</span>
-        </button>
-      </header>
-
-      <!-- Área de conteúdo -->
-      <div class="min-h-[360px] sm:min-h-[420px] p-5 sm:p-7">
-        <div class="pointer-events-none select-none rounded-xl border border-dashed border-neutral-300/70 p-6 text-center text-neutral-400 text-sm">
-          Adicione seus inputs/linhas de matéria-prima aqui…
-        </div>
-      </div>
-
-      <!-- Rodapé -->
-      <footer class="flex items-center justify-between p-5 sm:p-7 bg-[#2b2524] rounded-b-[24px]">
-        <button type="button"
-          class="rounded-full bg-red-600 px-5 py-2 text-white text-sm font-semibold shadow hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500">
-          Salvar produto
-        </button>
-
-        <div class="flex items-baseline gap-2">
-          <span class="text-lg sm:text-xl font-extrabold uppercase text-red-600">Total:</span>
-          <span class="text-lg sm:text-xl font-bold text-white">R$ 0,00</span>
-        </div>
-      </footer>
-
     </div>
-  </div>
+
+    <!-- 🔐 Modal de matéria-prima com busca e formulário -->
+    <div id="modal-materia-prima"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white w-[90%] max-w-2xl p-6 rounded-lg shadow-lg relative max-h-[90vh] overflow-y-auto">
+
+            <!-- ❌ Botão de fechar -->
+            <button id="close-modal" class="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-gray-900">
+                &times;
+            </button>
+
+            <!-- 🧾 Cabeçalho -->
+            <h2 class="text-lg font-semibold mb-4">Adicionar Matéria-Prima</h2>
+
+            <!-- 🔍 Barra de busca -->
+            <div class="flex items-center gap-4 mb-6">
+                <input id="searchInput" type="text" placeholder="Buscar matéria-prima..."
+                    class="border border-gray-300 rounded px-4 py-2 w-full" />
+                <button id="clearSearch" class="text-sm text-red-600 hover:underline">Limpar</button>
+            </div>
+
+            <!-- 📦 Lista de insumos disponíveis -->
+            <div id="itensList" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <!-- Insumos renderizados via JS -->
+            </div>
+
+
+
+
+        </div>
+    </div>
 </section>
 
 
-
-
-
-<script type="module" src="/static/js/pages/index.js"></script>
 {% endblock %}
 
 {% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/pages/produto.js') }}"></script>
 {% endblock %}

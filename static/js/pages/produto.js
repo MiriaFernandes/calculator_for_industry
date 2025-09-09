@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearSearch = document.getElementById('clearSearch');
   const btnSalvarProduto = document.getElementById('btnSalvarProduto');
   const nomeProdutoEl = document.getElementById('nomeProduto');
+  const openBtn = document.querySelector('.btn-materia-prima');
+  const modalMateriaPrima = document.getElementById('modal-materia-prima');
+  const closeMateriaPrimaBtn = document.getElementById('close-modal');
+  const formMateriaPrima = document.getElementById('form-materia-prima');
+  const listMateriaPrima = document.getElementById('materia-prima-list');
+
+  const abrirSalvarModalBtn = document.getElementById('abrirSalvarModal');
+  const fecharSalvarModalBtn = document.getElementById('close-salvar-modal');
+  const modalSalvarProduto = document.getElementById('modal-salvar-produto');
+
 
   // Paginação
   const paginationBar = document.getElementById('paginationBar');
@@ -29,10 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== Utils =====
   const fmt = n => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const debounce = (fn, ms=250) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
+  const debounce = (fn, ms = 250) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
   const toFloat = (v) => {
     if (v === null || v === undefined) return NaN;
-    return parseFloat(String(v).replace(/\./g,'').replace(',', '.'));
+    return parseFloat(String(v).replace(/\./g, '').replace(',', '.'));
   };
 
   // Toast (top-left)
@@ -62,38 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (timeout > 0) setTimeout(() => el.remove(), timeout);
   }
 
-  // ===== Render =====
-  function recalcTotal() {
-    let total = 0;
-    selecionados.forEach(ins => {
-      total += Number(ins.valor_unitario) * Number(ins.quantidade || 0);
+  // Abertura do Modal de Matéria-Prima
+  // Modal matéria-prima
+  if (modalMateriaPrima && closeMateriaPrimaBtn) {
+    openBtn.addEventListener('click', () => modalMateriaPrima.classList.remove('hidden'));
+    closeMateriaPrimaBtn.addEventListener('click', () => modalMateriaPrima.classList.add('hidden'));
+    modalMateriaPrima.addEventListener('click', (e) => {
+      if (e.target === modalMateriaPrima) modalMateriaPrima.classList.add('hidden');
     });
-    totalValorEl.textContent = fmt(total);
-    return total;
-  }
 
-  function renderSelecionados() {
-    selecionadosTableBody.innerHTML = '';
-    selecionados.forEach(ins => {
-      const subtotal = Number(ins.valor_unitario) * Number(ins.quantidade || 0);
-      const tr = document.createElement('tr');
-      tr.setAttribute('data-id', ins.id);
-      tr.setAttribute('data-vu', String(ins.valor_unitario));
-      tr.innerHTML = `
-        <td>${ins.nome}</td>
-        <td>${ins.unidade || ''}</td>
-        <td>${fmt(ins.valor_unitario)}</td>
-        <td>
-          <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
-                 value="${ins.quantidade ?? 1}" data-id="${ins.id}"
-                 class="quantidade-input" style="width:110px;">
-        </td>
-        <td data-subtotal>${fmt(subtotal)}</td>
-        <td><button class="btn btn-secondary" data-rm="${ins.id}" type="button">Remover</button></td>
-      `;
-      selecionadosTableBody.appendChild(tr);
-    });
-    recalcTotal();
+    if (formMateriaPrima && listMateriaPrima) {
+      formMateriaPrima.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // código para adicionar item
+      });
+    }
   }
 
   function renderItensList(lista) {
@@ -144,6 +137,71 @@ document.addEventListener('DOMContentLoaded', () => {
       pageInfo.textContent = `Página ${pageNum}`;
     }
   }
+
+  // Abertura do Modal Salvar Produto
+ // Modal salvar produto
+if (abrirSalvarModalBtn && fecharSalvarModalBtn && modalSalvarProduto) {
+  abrirSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.remove('hidden'));
+  fecharSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.add('hidden'));
+  modalSalvarProduto.addEventListener('click', (e) => {
+    if (e.target === modalSalvarProduto) modalSalvarProduto.classList.add('hidden');
+  });
+}
+
+  // ===== Render =====
+  function recalcTotal() {
+    let total = 0;
+    selecionados.forEach(ins => {
+      total += Number(ins.valor_unitario) * Number(ins.quantidade || 0);
+    });
+    totalValorEl.textContent = fmt(total);
+    return total;
+  }
+
+  function renderSelecionados() {
+    selecionadosTableBody.innerHTML = '';
+    selecionados.forEach(ins => {
+      const subtotal = Number(ins.valor_unitario) * Number(ins.quantidade || 0);
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-id', ins.id);
+      tr.setAttribute('data-vu', String(ins.valor_unitario));
+      tr.className = "casa";
+      // tr.innerHTML = `
+      //   <td>${ins.nome}</td>
+      //   <td>${ins.unidade || ''}</td>
+      //   <td>${fmt(ins.valor_unitario)}</td>
+      //   <td>
+      //     <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
+      //            value="${ins.quantidade ?? 1}" data-id="${ins.id}"
+      //            class="quantidade-input" style="width:110px;">
+      //   </td>
+      //   <td data-subtotal>${fmt(subtotal)}</td>
+      //   <td><button class="btn btn-primary casa " data-rm="${ins.id}" type="button">Remover</button></td>
+      // `;
+      tr.innerHTML = `
+  <td colspan="6" class="card-row">
+    <div class="card">
+      <div class="card-content">
+        <p>${ins.nome}</p>- ${ins.unidade || ''}<br>
+        Valor unitário: ${fmt(ins.valor_unitario)}<br>
+        Quantidade: 
+        <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
+               value="${ins.quantidade ?? 1}" data-id="${ins.id}"
+               class="quantidade-input">
+        <br>
+        <p data-subtotal>Subtotal: ${fmt(subtotal)}</p>
+        <br>
+        <button class="btn btn-primary casa" data-rm="${ins.id}" type="button">X</button>
+      </div>
+    </div>
+  </td>
+`;
+      selecionadosTableBody.appendChild(tr);
+    });
+    recalcTotal();
+  }
+
+
 
   // ===== Delegação na tabela selecionados =====
   selecionadosTableBody.addEventListener('input', e => {
@@ -303,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let data = null;
       const text = await resp.text();
-      if (text) { try { data = JSON.parse(text); } catch (_) {} }
+      if (text) { try { data = JSON.parse(text); } catch (_) { } }
 
       if (resp.status === 409) {
         showToast({
