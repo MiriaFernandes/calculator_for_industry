@@ -1,0 +1,83 @@
+/* cadastro.css refinado */
+
+/* ---------- Títulos ---------- */
+.hero-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #b91c1c;
+  margin-bottom: 0.5rem;
+  padding-top: 100px;
+}
+
+.hero-sub {
+  text-align: center;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* ---------- Container ---------- */
+.panel {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+  color: #111;
+  text-transform: uppercase;
+}
+
+/* ---------- Inputs ---------- */
+.input {
+  width: 100%;
+  height: 48px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #d9d9d9;
+  font-size: 0.95rem;
+  outline: none;
+  transition: background 0.2s ease-in-out;
+}
+
+.input:focus {
+  background: #cfcfcf;
+}
+
+/* Ajuste para SELECT */
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  cursor: pointer;
+}
+
+/* Ajuste para DATE */
+input[type="date"].input {
+  font-family: inherit;
+  padding-right: 2rem;
+}
+
+/* ---------- Botão ---------- */
+.btn-primary {
+  background-color: #b91c1c;
+  color: #fff;
+  padding: 0.9rem 2rem;
+  border-radius: 9999px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #9b1111;
+  cursor: pointer;
+}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
 import xml.etree.ElementTree as ET
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename  # <- IMPORT NECESSÁRIO
 from google.cloud.firestore_v1 import FieldFilter  # opcional, não usamos embaixo-
 from dotenv import load_dotenv  # <- NOVO IMPORT
 
-# Carrega variáveis do .env
+# Carrega variáveis do .envcd
 load_dotenv()
 app = Flask(__name__)
 
@@ -169,6 +169,48 @@ def listar_itens():
         return jsonify({'error': str(e)}), 500
 
 
+
+@app.route("/cadastro", methods=["GET", "POST"])
+def cadastro():
+    if request.method == "POST":
+        try:
+            # Captura os campos do formulário
+            codigo = request.form.get("codigo")
+            nome = request.form.get("nome")
+            fornecedor = request.form.get("fornecedor")
+            cnpj = request.form.get("cnpj")
+            descricao = request.form.get("descricao")
+            data_compra = request.form.get("data_compra")
+            quantidade = request.form.get("quantidade")
+            medida = request.form.get("medida")
+            valor_unitario = request.form.get("valor_unitario")
+
+            # Monta o documento
+            item_data = {
+                "codigo": codigo,
+                "nome": nome,
+                "fornecedor": fornecedor,
+                "cnpj": cnpj,
+                "descricao": descricao,
+                "data_compra": data_compra,
+                "quantidade": float(quantidade) if quantidade else None,
+                "medida": medida,
+                "valor_unitario": float(valor_unitario) if valor_unitario else None,
+            }
+
+            # Salva na coleção 'itens'
+            db.collection("itens").add(item_data)
+
+            flash("Item cadastrado com sucesso!", "success")
+            return redirect(url_for("cadastro"))
+
+        except Exception as e:
+            flash(f"Erro ao cadastrar: {str(e)}", "danger")
+            return redirect(url_for("cadastro"))
+
+    # GET → exibe o formulário
+    return render_template("cadastro.html")
+
 @app.route('/criar-itens', methods=['POST'])
 def criar_itens():
     """
@@ -272,6 +314,9 @@ def criar_itens():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+
 
 @app.route('/produto')
 def produto():

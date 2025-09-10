@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro de Matéria-Prima{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+  <style>
+    /* Força a cor do menu para preto apenas nesta tela */
+    .navbar-links a {
+      color: #000 !important;
+    }
+  </style>
+{% endblock %}
+
+{% block header %}
+  {{ super() }}
+{% endblock %}
+
+{% block content %}
+  <!-- Marca d’água ao fundo -->
+  <div class="wm" aria-hidden="true"></div>
+
+  <!-- Título e subtítulo -->
+  <h1 class="hero-title">CADASTRO DE MATÉRIA-PRIMA</h1>
+  <p class="hero-sub">Ferramenta para cadastro manual de matéria-prima.</p>
+
+  <!-- Formulário em 2 colunas, fiel ao layout -->
+  <section class="panel">
+    <form method="post" class="grid grid-cols-12 gap-5 md:gap-6">
+      <!-- Coluna esquerda -->
+      <div class="col-span-12 md:col-span-6">
+        <label for="codigo">CÓDIGO</label>
+        <input id="codigo" name="codigo" type="text" class="input">
+
+        <label for="fornecedor">FORNECEDOR</label>
+        <input id="fornecedor" name="fornecedor" type="text" class="input">
+
+        <label for="descricao">DESCRIÇÃO DO SERVIÇO</label>
+        <input id="descricao" name="descricao" type="text" class="input">
+
+        <label for="quantidade">QUANTIDADE</label>
+        <input id="quantidade" name="quantidade" type="number" step="0.01" class="input">
+      </div>
+
+      <!-- Coluna direita -->
+      <div class="col-span-12 md:col-span-6">
+        <label for="nome">NOME DA MATÉRIA-PRIMA OU SERVIÇO</label>
+        <input id="nome" name="nome" type="text" class="input">
+
+        <label for="cnpj">CNPJ (SE APLICÁVEL)</label>
+        <input id="cnpj" name="cnpj" type="text" class="input">
+
+        <label for="data_compra">DATA DE COMPRA</label>
+        <input id="data_compra" name="data_compra" type="date" class="input">
+
+        <label for="medida">MEDIDA</label>
+        <select id="medida" name="medida" class="input">
+          <option value="">Selecione...</option>
+          <option value="kg">KG</option>
+          <option value="unidade">Unidade</option>
+          <option value="litro">Litro</option>
+        </select>
+
+        <label for="valor_unitario">VALOR UNITÁRIO</label>
+        <input id="valor_unitario" name="valor_unitario" type="number" step="0.01" class="input">
+      </div>
+
+      <!-- Botão -->
+      <div class="col-span-12 text-center mt-6">
+        <button type="submit" class="btn btn-primary">CADASTRAR</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/pages/cadastro.js') }}"></script>
+{% endblock %}
