@@ -434,6 +434,9 @@ def itens_update_delete(doc_id):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/cadastro_manual')
+def cadastro_manual():
+    return render_template('cadastro_manual.html')
 
 @app.route('/itens', methods=['GET'])
 def listar_itens_view():
@@ -441,3 +444,5 @@ def listar_itens_view():
     return render_template('listar_itens.html')
 if __name__ == '__main__':
     app.run(debug=True)
+
+

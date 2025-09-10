@@ -30,14 +30,14 @@
     <nav class="flex items-center justify-between">
       <img src="/static/image/logotipo-red.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
 
-      <ul class="hidden lg:flex space-x-6 navbar-links">
-        <li><a href="{{ url_for('index') }}">Dashboard</a></li>
-        <li><a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a></li>
-        <li><a href="#">Cadastro Manual</a></li>
-        <li><a href="#">Calculadora</a></li>
-        <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
-        <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
-      </ul>
+    <ul class="hidden lg:flex space-x-6 navbar-links text-white">
+      <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+      <li><a>Upload Nota Fiscal</a></li>
+      <li><a href="#">Cadastro Manual</a></li>
+      <li><a href="#">Calculadora</a></li>
+      <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li>
+      <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
+    </ul>
 
       <div class="flex items-center space-x-4">
         <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 icon-header-login hidden lg:block"
