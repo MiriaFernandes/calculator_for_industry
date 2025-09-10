@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos{% endblock %}
+
+{% block content %}
+<div class="relative w-screen mx-[calc(50%-50vw)] overflow-x-clip">
+
+  <!-- Banner -->
+  <section class="w-full pt-24">
+    <div class="px-4 sm:px-6 lg:px-12">
+      <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-red-700 via-red-600 to-neutral-900 shadow">
+        <div class="grid grid-cols-12 items-center gap-6 px-6 py-10">
+          <div class="col-span-12 md:col-span-3 flex justify-center md:justify-start">
+            <img src="/static/image/illustration-truck.svg" alt="Ilustração caminhão"
+              class="h-28 sm:h-36 md:h-40 w-auto">
+          </div>
+          <div class="col-span-12 md:col-span-9 text-center md:text-left">
+            <h2 class="text-white text-xl sm:text-2xl md:text-3xl font-semibold leading-snug">
+              CONSULTE OS VALORES<br class="hidden sm:block" />
+              DOS SEUS PRODUTOS
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lista de produtos -->
+  <section class="w-full py-10">
+    <div class="px-4 sm:px-6 lg:px-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for produto in produtos %}
+        <div class="bg-white shadow rounded-xl p-6" data-produto="{{ produto.nome }}">
+          <!-- Header -->
+          <div class="flex justify-between items-start">
+            <h3 class="text-green-800 font-bold text-lg">{{ produto.nome }}</h3>
+            <div class="flex gap-3">
+              <!-- Botão excluir -->
+              <button class="btn-excluir text-gray-600 hover:text-red-600">
+                🗑️
+              </button>
+              <!-- Botão expandir -->
+              <button class="btn-toggle text-gray-600 hover:text-black">
+                <span class="icon">+</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Info básica -->
+          <div class="mt-2 text-sm text-gray-700">
+            <p><span class="font-semibold">Código:</span> {{ produto.codigo }}</p>
+            <p><span class="font-semibold">Data de Criação:</span> {{ produto.data_criacao }}</p>
+            <p><span class="font-semibold">Valor:</span>
+              <span class="text-green-600 font-bold">R$ {{ "%.2f"|format(produto.valor) }}</span>
+            </p>
+          </div>
+
+          <!-- Detalhes escondidos -->
+          <div class="detalhes hidden mt-4 border-t pt-3 text-sm">
+            <h4 class="font-semibold mb-2">Matéria-Prima</h4>
+            <ul class="space-y-1">
+              {% for item in produto.materias_primas %}
+              <li>
+                <span class="font-medium">{{ item.nome }}</span> — Qtd {{ item.qtd }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal exclusão -->
+  <div id="modalExcluir"
+    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-6 w-[90%] max-w-sm text-center shadow-lg relative">
+      <button onclick="fecharModal()"
+        class="absolute top-2 right-3 text-xl font-bold text-gray-600 hover:text-gray-900">&times;</button>
+
+      <h3 id="modalProduto" class="text-green-800 font-bold text-lg mb-4">Produto</h3>
+      <p class="text-gray-600 mb-6">Tem certeza que deseja excluir este produto permanentemente?</p>
+
+      <div class="flex justify-center gap-4">
+        <button onclick="confirmarExclusao()"
+          class="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700">
+          SIM
+        </button>
+        <button onclick="fecharModal()"
+          class="bg-gray-300 px-6 py-2 rounded-full font-semibold hover:bg-gray-400">
+          NÃO
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Alternar detalhes
+  document.querySelectorAll('.btn-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('[data-produto]');
+      const detalhes = card.querySelector('.detalhes');
+      const icon = btn.querySelector('.icon');
+      detalhes.classList.toggle('hidden');
+      icon.textContent = detalhes.classList.contains('hidden') ? '+' : '–';
+    });
+  });
+
+  // Controle do modal
+  let produtoSelecionado = null;
+
+  document.querySelectorAll('.btn-excluir').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('[data-produto]');
+      produtoSelecionado = card.dataset.produto;
+      document.getElementById('modalProduto').textContent = produtoSelecionado;
+      document.getElementById('modalExcluir').classList.remove('hidden');
+    });
+  });
+
+  function fecharModal() {
+    document.getElementById('modalExcluir').classList.add('hidden');
+  }
+
+  function confirmarExclusao() {
+    const card = document.querySelector(`[data-produto="${produtoSelecionado}"]`);
+    if (card) card.remove();
+    fecharModal();
+
+    // Backend aqui:
+    // fetch(`/produtos/${produtoSelecionado}`, { method: 'DELETE' })
+  }
+</script>
+{% endblock %}

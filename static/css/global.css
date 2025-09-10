@@ -74,8 +74,12 @@ body{
     font-size: 13px;
     line-height: 13px;
     text-transform: uppercase;
-    color: var(--white);
+    color: var(--cod_gray);
 
+}
+
+.icon-header-login{
+    color: var(--cod_gray);
 }
 
 .navbar-links>li>a:hover{

@@ -211,6 +211,10 @@ def cadastro():
     # GET → exibe o formulário
     return render_template("cadastro.html")
 
+
+@app.route('/meus-produtos')
+def meusProdutos():
+    return render_template('meus_produtos.html')
 @app.route('/criar-itens', methods=['POST'])
 def criar_itens():
     """
@@ -323,6 +327,10 @@ def produto():
     return render_template('produto.html')
 
 # >>> ROTA QUE FALTAVA <<<
+@app.route('/upload')
+def upload():
+    return render_template('uplaod.html')
+
 @app.route('/upload-xml', methods=['POST'])
 def upload_xml():
     if 'xmlFile' not in request.files:
@@ -352,6 +360,7 @@ def upload_xml():
                 os.remove(temp_path)
         except Exception:
             pass
+
 
 @app.route('/criar-produto', methods=['POST'])
 def criar_produto():
@@ -472,6 +481,9 @@ def itens_update_delete(doc_id):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/cadastro_manual')
+def cadastro_manual():
+    return render_template('cadastro_manual.html')
 
 @app.route('/itens', methods=['GET'])
 def listar_itens_view():
@@ -479,3 +491,5 @@ def listar_itens_view():
     return render_template('listar_itens.html')
 if __name__ == '__main__':
     app.run(debug=True)
+
+

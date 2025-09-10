@@ -1,5 +1,11 @@
 @import url("./global.css");
+.home-header>nav>ul>li>a{
+  color: var(--white);
+}
 
+.login-icon{
+ color: var(--white);
+}
 .home {
     background-image: url("../image/bg-home.svg");
     background-repeat: no-repeat;
