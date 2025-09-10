@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const modalFechar = document.getElementById('modalFechar');
 
   // --- MODAL NAMESPACED para "Fechar Nota fiscal" ---
-  const nfCloseModal   = document.getElementById('nfCloseModal');
-  const nfCloseCancel  = document.getElementById('nfCloseCancel');
+  const nfCloseModal = document.getElementById('nfCloseModal');
+  const nfCloseCancel = document.getElementById('nfCloseCancel');
   const nfCloseConfirm = document.getElementById('nfCloseConfirm');
 
   // --- ESTADO / STORAGE ---
@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // --- HELPERS VISUAIS ---
   const show = el => el && el.classList.remove('hidden');
   const hide = el => el && el.classList.add('hidden');
+
+  const emptyState = document.getElementById("emptyState");
+  const itensContainers = document.getElementById("itensContainer");
+  const itensTable = document.getElementById("itensTable");
 
   function exibirItens(itens) {
     itensTableBody.innerHTML = '';
@@ -136,42 +140,77 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // --- UPLOAD DO XML ---
-  uploadForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+  // uploadForm.addEventListener('submit', function (e) {
+  //   e.preventDefault();
+  //   if (!xmlFileInput.files.length) {
+  //     alert('Por favor, selecione um arquivo XML');
+  //     return;
+  //   }
+
+  //   show(loadingIndicator);
+
+  //   const formData = new FormData();
+  //   formData.append('xmlFile', xmlFileInput.files[0]);
+
+  //   fetch('/upload-xml', { method: 'POST', body: formData })
+  //     .then(r => r.json())
+  //     .then(data => {
+  //       hide(loadingIndicator);
+
+  //       if (data.error) {
+  //         alert('Erro ao processar XML: ' + data.error);
+  //         return;
+  //       }
+
+  //       // backend pode retornar lista pura OU {itens:[...]}
+  //       const itens = Array.isArray(data) ? data : (data.itens || []);
+
+  //       // salva (substitui) no localStorage
+  //       itensProcessados = itens;
+  //       salvarNoLocalStorage(itensProcessados);
+
+  //       // atualiza UI
+  //       atualizarUIAposCarregar(itensProcessados);
+  //     })
+  //     .catch(err => {
+  //       hide(loadingIndicator);
+  //       console.error(err);
+  //       alert('Ocorreu um erro ao processar o arquivo');
+  //     });
+  // });
+  xmlFileInput.addEventListener("change", function () {
     if (!xmlFileInput.files.length) {
-      alert('Por favor, selecione um arquivo XML');
+      alert("Por favor, selecione um arquivo XML");
       return;
     }
 
     show(loadingIndicator);
 
     const formData = new FormData();
-    formData.append('xmlFile', xmlFileInput.files[0]);
+    formData.append("xmlFile", xmlFileInput.files[0]);
 
-    fetch('/upload-xml', { method: 'POST', body: formData })
-      .then(r => r.json())
-      .then(data => {
+    fetch("/upload-xml", { method: "POST", body: formData })
+      .then((r) => r.json())
+      .then((data) => {
         hide(loadingIndicator);
 
         if (data.error) {
-          alert('Erro ao processar XML: ' + data.error);
+          alert("Erro ao processar XML: " + data.error);
           return;
         }
 
         // backend pode retornar lista pura OU {itens:[...]}
         const itens = Array.isArray(data) ? data : (data.itens || []);
 
-        // salva (substitui) no localStorage
         itensProcessados = itens;
         salvarNoLocalStorage(itensProcessados);
 
-        // atualiza UI
         atualizarUIAposCarregar(itensProcessados);
       })
-      .catch(err => {
+      .catch((err) => {
         hide(loadingIndicator);
         console.error(err);
-        alert('Ocorreu um erro ao processar o arquivo');
+        alert("Ocorreu um erro ao processar o arquivo");
       });
   });
 
@@ -232,4 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // --- opcional: carregarProdutosExistentes(); ---
+
+
+
 });

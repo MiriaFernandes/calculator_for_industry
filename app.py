@@ -168,7 +168,9 @@ def listar_itens():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
+@app.route('/meus-produtos')
+def meusProdutos():
+    return render_template('meus_produtos.html')
 @app.route('/criar-itens', methods=['POST'])
 def criar_itens():
     """
@@ -278,6 +280,10 @@ def produto():
     return render_template('produto.html')
 
 # >>> ROTA QUE FALTAVA <<<
+@app.route('/upload')
+def upload():
+    return render_template('uplaod.html')
+
 @app.route('/upload-xml', methods=['POST'])
 def upload_xml():
     if 'xmlFile' not in request.files:
@@ -307,6 +313,7 @@ def upload_xml():
                 os.remove(temp_path)
         except Exception:
             pass
+
 
 @app.route('/criar-produto', methods=['POST'])
 def criar_produto():

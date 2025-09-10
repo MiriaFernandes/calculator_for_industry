@@ -23,56 +23,59 @@
 </head>
 
 <body class="flex flex-col min-h-screen">
+  {% block header %}
+
   <header class="absolute top-0 left-0 right-0 z-50 bg-transparent px-6 py-3 app-navbar nav-link">
-  <!-- Menu desktop -->
-  <nav class="flex items-center justify-between">
-    <img src="/static/image/logotipo-mcm.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
+    <!-- Menu desktop -->
+    <nav class="flex items-center justify-between">
+      <img src="/static/image/logotipo-red.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
 
-    <ul class="hidden lg:flex space-x-6 navbar-links text-white">
-      <li><a href="{{ url_for('index') }}">Dashboard</a></li>
-      <li><a>Upload Nota Fiscal</a></li>
-      <li><a href="#">Cadastro Manual</a></li>
-      <li><a href="#">Calculadora</a></li>
-      <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li>
-      <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
-    </ul>
+      <ul class="hidden lg:flex space-x-6 navbar-links">
+        <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+        <li><a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a></li>
+        <li><a href="#">Cadastro Manual</a></li>
+        <li><a href="#">Calculadora</a></li>
+        <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
+        <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
+      </ul>
 
-    <div class="flex items-center space-x-4">
-      <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hidden lg:block"
-        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M5.121 17.804A9.004 9.004 0 0112 15c2.21 0 4.21.805 5.879 2.121M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-
-      <button id="menu-toggle" class="lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      <div class="flex items-center space-x-4">
+        <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 icon-header-login hidden lg:block"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5.121 17.804A9.004 9.004 0 0112 15c2.21 0 4.21.805 5.879 2.121M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-      </button>
-    </div>
-  </nav>
 
-  <!-- Menu mobile -->
-  <nav id="mobile-menu"
-    class="lg:hidden hidden fixed top-0 right-0 flex flex-col p-6 space-y-6 shadow-lg z-50 menu-mobile">
-    <div class="flex justify-end">
-      <button id="menu-close" class="text-2xl font-bold">
-        &times;
-      </button>
-    </div>
+        <button id="menu-toggle" class="lg:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </nav>
 
-    <div class="flex flex-col space-y-4 text-sm font-medium">
-      <a href="#">Dashboard</a>
-      <a href="#">Upload Nota Fiscal</a>
-      <a href="#">Cadastro Manual</a>
-      <a href="#">Calculadora</a>
-      <a href="#">Produtos Finais</a>
-      <a href="#">Matérias-Primas</a>
-      <a href="#" id="open-modal-mobile" class="hover:text-gray-300 font-semibold transition">Sign In</a>
-    </div>
-  </nav>
-</header>
+    <!-- Menu mobile -->
+    <nav id="mobile-menu"
+      class="lg:hidden hidden fixed top-0 right-0 flex flex-col p-6 space-y-6 shadow-lg z-50 menu-mobile">
+      <div class="flex justify-end">
+        <button id="menu-close" class="text-2xl font-bold">
+          &times;
+        </button>
+      </div>
+
+      <div class="flex flex-col space-y-4 text-sm font-medium">
+        <a href="#">Dashboard</a>
+        <a href="#">Upload Nota Fiscal</a>
+        <a href="#">Cadastro Manual</a>
+        <a href="#">Calculadora</a>
+        <a href="#">Produtos Finais</a>
+        <a href="#">Matérias-Primas</a>
+        <a href="#" id="open-modal-mobile" class="hover:text-gray-300 font-semibold transition">Sign In</a>
+      </div>
+    </nav>
+  </header>
+  {% endblock %}
 
 
   <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
