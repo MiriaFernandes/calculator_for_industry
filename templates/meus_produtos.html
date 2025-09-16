@@ -11,7 +11,7 @@
       <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-red-700 via-red-600 to-neutral-900 shadow">
         <div class="grid grid-cols-12 items-center gap-6 px-6 py-10">
           <div class="col-span-12 md:col-span-3 flex justify-center md:justify-start">
-            <img src="/static/image/illustration-truck.svg" alt="Ilustração caminhão"
+            <img src="/static/image/illutration-meusprodutos.svg" alt="Ilustração caminhão"
               class="h-28 sm:h-36 md:h-40 w-auto">
           </div>
           <div class="col-span-12 md:col-span-9 text-center md:text-left">
@@ -25,115 +25,308 @@
     </div>
   </section>
 
-  <!-- Lista de produtos -->
-  <section class="w-full py-10">
-    <div class="px-4 sm:px-6 lg:px-12">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for produto in produtos %}
-        <div class="bg-white shadow rounded-xl p-6" data-produto="{{ produto.nome }}">
-          <!-- Header -->
-          <div class="flex justify-between items-start">
-            <h3 class="text-green-800 font-bold text-lg">{{ produto.nome }}</h3>
-            <div class="flex gap-3">
-              <!-- Botão excluir -->
-              <button class="btn-excluir text-gray-600 hover:text-red-600">
-                🗑️
-              </button>
-              <!-- Botão expandir -->
-              <button class="btn-toggle text-gray-600 hover:text-black">
-                <span class="icon">+</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Info básica -->
-          <div class="mt-2 text-sm text-gray-700">
-            <p><span class="font-semibold">Código:</span> {{ produto.codigo }}</p>
-            <p><span class="font-semibold">Data de Criação:</span> {{ produto.data_criacao }}</p>
-            <p><span class="font-semibold">Valor:</span>
-              <span class="text-green-600 font-bold">R$ {{ "%.2f"|format(produto.valor) }}</span>
-            </p>
-          </div>
-
-          <!-- Detalhes escondidos -->
-          <div class="detalhes hidden mt-4 border-t pt-3 text-sm">
-            <h4 class="font-semibold mb-2">Matéria-Prima</h4>
-            <ul class="space-y-1">
-              {% for item in produto.materias_primas %}
-              <li>
-                <span class="font-medium">{{ item.nome }}</span> — Qtd {{ item.qtd }}
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        {% endfor %}
+  <!-- Barra de Pesquisa -->
+  <section class="w-full mt-8 px-4 sm:px-6 lg:px-12">
+    <div class="relative max-w-2xl mx-auto">
+      <input 
+        type="text" 
+        placeholder="Digite o nome do produto" 
+        class="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+      >
+      <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
       </div>
     </div>
   </section>
 
-  <!-- Modal exclusão -->
-  <div id="modalExcluir"
-    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-6 w-[90%] max-w-sm text-center shadow-lg relative">
-      <button onclick="fecharModal()"
-        class="absolute top-2 right-3 text-xl font-bold text-gray-600 hover:text-gray-900">&times;</button>
+  <!-- Lista de produtos -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+    <div>
+      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
+        <summary class="cursor-pointer list-none p-4">
+          <div class="flex flex-col">
+            <!-- Cabeçalho -->
+            <h2 class="text-center font-semibold text-green-900">MCM588</h2>
 
-      <h3 id="modalProduto" class="text-green-800 font-bold text-lg mb-4">Produto</h3>
-      <p class="text-gray-600 mb-6">Tem certeza que deseja excluir este produto permanentemente?</p>
+            <!-- Infos -->
+            <div class="mt-4 space-y-2 text-sm text-gray-600">
+              <div class="flex justify-between">
+                <span class="font-medium">CÓDIGO</span>
+                <span class="text-gray-400">2.72.0028</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">DATA DE CRIAÇÃO</span>
+                <span class="text-gray-400">19/08/2025</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">VALOR</span>
+                <span class="text-green-600 font-semibold">R$ 240,50</span>
+              </div>
+            </div>
 
-      <div class="flex justify-center gap-4">
-        <button onclick="confirmarExclusao()"
-          class="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700">
-          SIM
-        </button>
-        <button onclick="fecharModal()"
-          class="bg-gray-300 px-6 py-2 rounded-full font-semibold hover:bg-gray-400">
-          NÃO
-        </button>
+            <!-- Ações -->
+            <div class="mt-4 flex justify-between items-center">
+              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
+                🗑️
+              </button>
+              <span class="toggle-icon text-xl font-bold">+</span>
+            </div>
+          </div>
+        </summary>
+
+        <!-- Conteúdo expandido -->
+        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
+          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
+          <div class="flex justify-between">
+            <span>NOME: COBRE</span><span>QTD 0,77</span>
+          </div>
+          <div class="flex justify-between">
+            <span>NOME: CADARCO</span><span>QTD 2</span>
+          </div>
+          <div class="flex justify-between">
+            <span>NOME: FIBRA</span><span>QTD 0,03</span>
+          </div>
+          <div class="flex justify-between">
+            <span>NOME: VERNIZ</span><span>QTD 0,05</span>
+          </div>
+          <div class="flex justify-between">
+            <span>NOME: COLA</span><span>QTD 0,05</span>
+          </div>
+          <div class="flex justify-between">
+            <span>NOME: ESPAGUETE (7MM)</span><span>QTD 0,05</span>
+          </div>
+          <div class="flex justify-between">
+            <span>NOME: TERMINAL</span><span>QTD 1</span>
+          </div>
+        </div>
+      </details>
+
+      <!-- Modal de confirmação -->
+      <div class="delete-modal absolute bg-white rounded-2xl p-4 shadow-lg hidden flex-col justify-center z-10 transition-all">
+        <div class="text-center">
+          <h2 class="text-lg font-semibold text-green-900 mb-2">MCM588</h2>
+          <p class="text-gray-600 mb-6">Tem certeza de que deseja excluir este produto permanentemente?</p>
+          
+          <div class="flex justify-center space-x-4">
+            <button class="confirm-yes px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">SIM</button>
+            <button class="confirm-no px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">NÃO</button>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Replicando os detalhes para outros produtos (copiar esse bloco e editar conforme necessário) -->
+    <!-- Outro produto -->
+    <div>
+      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
+        <summary class="cursor-pointer list-none p-4">
+          <div class="flex flex-col">
+            <h2 class="text-center font-semibold text-green-900">MCM589</h2>
+            <div class="mt-4 space-y-2 text-sm text-gray-600">
+              <div class="flex justify-between">
+                <span class="font-medium">CÓDIGO</span>
+                <span class="text-gray-400">2.72.0029</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">DATA DE CRIAÇÃO</span>
+                <span class="text-gray-400">20/08/2025</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">VALOR</span>
+                <span class="text-green-600 font-semibold">R$ 250,00</span>
+              </div>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
+                🗑️
+              </button>
+              <span class="toggle-icon text-xl font-bold">+</span>
+            </div>
+          </div>
+        </summary>
+        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
+          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
+          <div class="flex justify-between">
+            <span>NOME: ALUMINIO</span><span>QTD 1,00</span>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- Outro produto -->
+    <div>
+      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
+        <summary class="cursor-pointer list-none p-4">
+          <div class="flex flex-col">
+            <h2 class="text-center font-semibold text-green-900">MCM590</h2>
+            <div class="mt-4 space-y-2 text-sm text-gray-600">
+              <div class="flex justify-between">
+                <span class="font-medium">CÓDIGO</span>
+                <span class="text-gray-400">2.72.0030</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">DATA DE CRIAÇÃO</span>
+                <span class="text-gray-400">21/08/2025</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">VALOR</span>
+                <span class="text-green-600 font-semibold">R$ 260,00</span>
+              </div>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
+                🗑️
+              </button>
+              <span class="toggle-icon text-xl font-bold">+</span>
+            </div>
+          </div>
+        </summary>
+        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
+          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
+          <div class="flex justify-between">
+            <span>NOME: AÇO</span><span>QTD 2,50</span>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div>
+      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
+        <summary class="cursor-pointer list-none p-4">
+          <div class="flex flex-col">
+            <h2 class="text-center font-semibold text-green-900">MCM590</h2>
+            <div class="mt-4 space-y-2 text-sm text-gray-600">
+              <div class="flex justify-between">
+                <span class="font-medium">CÓDIGO</span>
+                <span class="text-gray-400">2.72.0030</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">DATA DE CRIAÇÃO</span>
+                <span class="text-gray-400">21/08/2025</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="font-medium">VALOR</span>
+                <span class="text-green-600 font-semibold">R$ 260,00</span>
+              </div>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
+                🗑️
+              </button>
+              <span class="toggle-icon text-xl font-bold">+</span>
+            </div>
+          </div>
+        </summary>
+        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
+          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
+          <div class="flex justify-between">
+            <span>NOME: AÇO</span><span>QTD 2,50</span>
+          </div>
+        </div>
+      </details>
+    </div>
+
   </div>
+
+</div>
 
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  // Alternar detalhes
-  document.querySelectorAll('.btn-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const card = btn.closest('[data-produto]');
-      const detalhes = card.querySelector('.detalhes');
-      const icon = btn.querySelector('.icon');
-      detalhes.classList.toggle('hidden');
-      icon.textContent = detalhes.classList.contains('hidden') ? '+' : '–';
+  document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    const deleteModals = document.querySelectorAll('.delete-modal');
+    const confirmYesButtons = document.querySelectorAll('.confirm-yes');
+    const confirmNoButtons = document.querySelectorAll('.confirm-no');
+
+    // Abrir modal ao clicar no ícone de lixeira
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function (e) {
+        e.stopPropagation(); // Impede que o evento propague e abra/feche o details
+
+        // Encontrar o modal correspondente a este card
+        const card = this.closest('.product-card'); // Agora estamos buscando o card pelo seletor correto
+        const modal = document.querySelector('.delete-modal'); // Aqui estamos pegando o modal em geral, não dentro do card
+
+        if (modal) {
+          // Calcula a posição do card na tela
+          const cardRect = card.getBoundingClientRect();
+
+          // Ajusta a posição do modal para sobrepor o card
+          modal.style.top = `${cardRect.top + window.scrollY}px`; // Posição do card + scroll
+          modal.style.left = `${cardRect.left + window.scrollX}px`; // Posição do card + scroll
+          modal.style.width = `${cardRect.width}px`; // Para que o modal tenha o mesmo tamanho do card
+          modal.style.height = `${cardRect.height}px`; // Para que o modal tenha o mesmo tamanho do card
+          modal.classList.remove('hidden');
+        }
+      });
+    });
+
+    // Fechar modal ao clicar em "NÃO"
+    confirmNoButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const modal = this.closest('.delete-modal');
+        if (modal) {
+          modal.classList.add('hidden');
+        }
+      });
+    });
+
+    // Ação de exclusão ao clicar em "SIM"
+    confirmYesButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const modal = this.closest('.delete-modal');
+        if (modal) {
+          alert('Produto excluído com sucesso!');
+          modal.classList.add('hidden');
+          // Aqui você pode adicionar a lógica real para excluir o produto
+        }
+      });
+    });
+
+    // Fechar modal ao clicar fora dele
+    deleteModals.forEach(modal => {
+      modal.addEventListener('click', function (e) {
+        if (e.target === this) {
+          this.classList.add('hidden');
+        }
+      });
     });
   });
-
-  // Controle do modal
-  let produtoSelecionado = null;
-
-  document.querySelectorAll('.btn-excluir').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const card = btn.closest('[data-produto]');
-      produtoSelecionado = card.dataset.produto;
-      document.getElementById('modalProduto').textContent = produtoSelecionado;
-      document.getElementById('modalExcluir').classList.remove('hidden');
-    });
-  });
-
-  function fecharModal() {
-    document.getElementById('modalExcluir').classList.add('hidden');
-  }
-
-  function confirmarExclusao() {
-    const card = document.querySelector(`[data-produto="${produtoSelecionado}"]`);
-    if (card) card.remove();
-    fecharModal();
-
-    // Backend aqui:
-    // fetch(`/produtos/${produtoSelecionado}`, { method: 'DELETE' })
-  }
 </script>
+
+<style>
+  details>summary {
+    list-style: none;
+  }
+
+  details>summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .delete-modal {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .casa{
+    width: 50px;
+    background-color: red;
+  }
+</style>
 {% endblock %}

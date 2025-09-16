@@ -16,10 +16,28 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
 
   <!-- Estilos específicos da página -->
   {% block styles %}{% endblock %}
-  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+  <style>
+    .login-modal-content {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .login-input-field {
+      border: 1px solid #d1d5db;
+      background-color: #f9fafb;
+      padding: 10px 12px;
+    }
+
+    .login-input-field:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+  </style>
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -30,18 +48,18 @@
     <nav class="flex items-center justify-between">
       <img src="/static/image/logotipo-red.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
 
-    <ul class="hidden lg:flex space-x-6 navbar-links text-white">
-      <li><a href="{{ url_for('index') }}">Dashboard</a></li>
-      <li><a>Upload Nota Fiscal</a></li>
-      <li><a href="{{ url_for('cadastro') }}">Cadastro Manual</a></li>
-      <li><a href="#">Calculadora</a></li>
-      <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li>
-      <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
-    </ul>
+      <ul class="hidden lg:flex space-x-6 navbar-links text-white">
+        <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+        <li><a>Upload Nota Fiscal</a></li>
+        <li><a href="{{ url_for('cadastro') }}">Cadastro Manual</a></li>
+        <li><a href="#">Calculadora</a></li>
+        <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
+        <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
+      </ul>
 
       <div class="flex items-center space-x-4">
-        <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 icon-header-login hidden lg:block"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 icon-header-login hidden lg:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M5.121 17.804A9.004 9.004 0 0112 15c2.21 0 4.21.805 5.879 2.121M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
@@ -78,18 +96,43 @@
   {% endblock %}
 
 
-  <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white text-black w-[90%] max-w-md p-6 rounded-lg shadow-lg relative">
+  <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="flex bg-white text-black w-full max-w-[800px] p-8 rounded-lg login-modal-content relative">
+      <div>
 
-      <button id="close-modal" class="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-gray-900">
-        &times;
-      </button>
-      <h2 class="text-xl font-semibold mb-4">Entrar na sua conta</h2>
-      <form class="flex flex-col space-y-4">
-        <input type="email" placeholder="Email" class="border border-gray-300 rounded px-4 py-2">
-        <input type="password" placeholder="Senha" class="border border-gray-300 rounded px-4 py-2">
-        <button type="submit" class="bg-gray-900 text-white py-2 rounded hover:bg-gray-800 transition">Entrar</button>
-      </form>
+        <button id="close-modal" class="absolute top-4 right-4 text-2xl font-bold text-gray-500 hover:text-gray-700">
+          &times;
+        </button>
+
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800 uppercase">Login</h2>
+
+        <form class="flex flex-col space-y-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">EMAIL:</label>
+            <div class="text-gray-500 text-sm mb-2">www.elofexample.com</div>
+            <input type="email" class="login-input-field w-full rounded text-gray-700 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">SENHA:</label>
+            <div class="text-gray-500 text-sm mb-2">**********</div>
+            <input type="password" class="login-input-field w-full rounded text-gray-700 focus:outline-none">
+          </div>
+
+          <div class="border-t border-gray-300 my-4">
+
+          </div>
+
+          <button type="submit"
+            class="bg-gray-900 text-white py-3 rounded font-semibold hover:bg-gray-800 transition text-sm uppercase">
+            Login
+          </button>
+        </form>
+      </div>
+      <div>
+        <img src="/static/image/img-login.svg" alt="Logo da Empresa" class=" ">
+
+      </div>
     </div>
   </div>
 
@@ -183,6 +226,43 @@
         } catch (e) { }
       });
     })();
+
+    // Script para controlar a abertura e fechamento do modal
+    document.addEventListener('DOMContentLoaded', function () {
+      const loginModal = document.getElementById('login-modal');
+      const openModalDesktop = document.getElementById('open-modal-desktop');
+      const openModalMobile = document.getElementById('open-modal-mobile');
+      const closeModalBtn = document.getElementById('close-modal');
+
+      // Abrir modal (desktop)
+      if (openModalDesktop) {
+        openModalDesktop.addEventListener('click', function () {
+          loginModal.classList.remove('hidden');
+        });
+      }
+
+      // Abrir modal (mobile)
+      if (openModalMobile) {
+        openModalMobile.addEventListener('click', function (e) {
+          e.preventDefault();
+          loginModal.classList.remove('hidden');
+        });
+      }
+
+      // Fechar modal
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function () {
+          loginModal.classList.add('hidden');
+        });
+      }
+
+      // Fechar modal ao clicar fora
+      loginModal.addEventListener('click', function (e) {
+        if (e.target === loginModal) {
+          loginModal.classList.add('hidden');
+        }
+      });
+    });
   </script>
   {% endblock %}
 </body>
