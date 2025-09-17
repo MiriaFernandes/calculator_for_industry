@@ -27,23 +27,7 @@
 
   <!-- Formulário em 2 colunas, fiel ao layout -->
   <section class="panel">
-    
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="mb-4">
-      {% for category, message in messages %}
-        <div class="rounded-lg p-3 text-sm
-                    {% if category == 'success' %} bg-green-100 text-green-800 border border-green-300
-                    {% elif category == 'danger' %} bg-red-100 text-red-800 border border-red-300
-                    {% else %} bg-gray-100 text-gray-800 border border-gray-300 {% endif %}">
-          {{ message }}
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
-
-<form method="post" class="grid grid-cols-12 gap-5 md:gap-6">
+    <form method="post" class="grid grid-cols-12 gap-5 md:gap-6">
       <!-- Coluna esquerda -->
       <div class="col-span-12 md:col-span-6">
         <label for="codigo">CÓDIGO</label>

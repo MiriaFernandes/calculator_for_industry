@@ -7,6 +7,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename  # <- IMPORT NECESSÁRIO
 from google.cloud.firestore_v1 import FieldFilter  # opcional, não usamos embaixo-
 from dotenv import load_dotenv  # <- NOVO IMPORT
+
 # Carrega variáveis do .envcd
 load_dotenv()
 app = Flask(__name__)
@@ -39,7 +40,10 @@ def _json_safe(x):
     return x
 
 def _find_nfe_root(root):
-    """Docstring removida para otimização"""
+    """
+    Retorna o elemento <NFe> mesmo que esteja dentro de <nfeProc>, <enviNFe>, etc.
+    Ignora namespace exato usando curingas.
+    """
     # 1) Caso a raiz já seja NFe
     if root.tag.endswith('}NFe') or root.tag == 'NFe':
         return root
@@ -56,6 +60,7 @@ def _find_nfe_root(root):
             return elem
 
     return None
+
 
 def extrair_dados_xml(xml_file):
     try:
@@ -114,6 +119,7 @@ def extrair_dados_xml(xml_file):
     except Exception as e:
         return {'error': str(e)}
 
+
 @app.route('/listar-itens', methods=['GET'])
 def listar_itens():
     try:
@@ -163,6 +169,8 @@ def listar_itens():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
     if request.method == "POST":
@@ -195,21 +203,28 @@ def cadastro():
             db.collection("itens").add(item_data)
 
             flash("Item cadastrado com sucesso!", "success")
-            return redirect(url_for("cadastro"))
+            return render_template("cadastro.html")
 
         except Exception as e:
             flash(f"Erro ao cadastrar: {str(e)}", "danger")
-            return redirect(url_for("cadastro"))
+            return render_template("cadastro.html")
 
     # GET → exibe o formulário
     return render_template("cadastro.html")
+
 
 @app.route('/meus-produtos')
 def meusProdutos():
     return render_template('meus_produtos.html')
 @app.route('/criar-itens', methods=['POST'])
 def criar_itens():
-    """Docstring removida para otimização"""
+    """
+    Recebe { itens: [ {codigo?, nome, unidade, valor_unitario, data_emissao}... ] }
+    1) Valida todos
+    2) Checa duplicatas (mesmo nome, unidade, valor_unitario, data_emissao; e codigo se vier)
+    3) Se houver qualquer duplicata -> 409 e nada é gravado
+    4) Se não houver -> grava tudo em batch (atômico)
+    """
     try:
         body = request.get_json(silent=True) or {}
         itens = body.get('itens')
@@ -300,9 +315,13 @@ def criar_itens():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+
 
 @app.route('/produto')
 def produto():
@@ -342,6 +361,7 @@ def upload_xml():
                 os.remove(temp_path)
         except Exception:
             pass
+
 
 @app.route('/criar-produto', methods=['POST'])
 def criar_produto():
@@ -406,6 +426,8 @@ def criar_produto():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
 @app.route('/listar-produtos', methods=['GET'])
 def listar_produtos():
     try:
@@ -423,6 +445,8 @@ def produtos_alias():
 @app.route("/texte")
 def texte():
     return render_template("texte.html")
+
+
 
 @app.route('/itens/<doc_id>', methods=['PATCH', 'DELETE'])
 def itens_update_delete(doc_id):
@@ -457,14 +481,16 @@ def itens_update_delete(doc_id):
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+
 @app.route('/cadastro_manual')
 def cadastro_manual():
     return render_template('cadastro_manual.html')
 
 @app.route('/itens', methods=['GET'])
 def listar_itens_view():
-    """Docstring removida para otimização"""
+    """Tela para listar/editar/apagar itens da coleção 'itens'."""
     return render_template('listar_itens.html')
 if __name__ == '__main__':
     app.run(debug=True)
+
 
