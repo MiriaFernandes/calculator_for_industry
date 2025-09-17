@@ -149,10 +149,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== Render =====
+  function parseNumero(valor) {
+    if (!valor) return 0;
+    return parseFloat(valor.toString().replace(",", "."));
+  }
   function recalcTotal() {
     let total = 0;
     selecionados.forEach(ins => {
-      total += Number(ins.valor_unitario) * Number(ins.quantidade || 0);
+      total += parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
+
+      // total += Number(ins.valor_unitario) * Number(ins.quantidade || 0);
     });
     totalValorEl.textContent = fmt(total);
     return total;
@@ -161,7 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSelecionados() {
     selecionadosTableBody.innerHTML = '';
     selecionados.forEach(ins => {
-      const subtotal = Number(ins.valor_unitario) * Number(ins.quantidade || 0);
+
+      // const subtotal = Number(ins.valor_unitario) * Number(ins.quantidade || 0);
+      const subtotal = parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
+
       const tr = document.createElement('tr');
       tr.setAttribute('data-id', ins.id);
       tr.setAttribute('data-vu', String(ins.valor_unitario));
@@ -217,14 +226,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!input) return;
     const id = input.getAttribute('data-id');
     const row = input.closest('tr');
-    const vUnit = Number(row.getAttribute('data-vu'));
+    // const vUnit = Number(row.getAttribute('data-vu'));
     const qtd = toFloat(input.value);
-    const q = isNaN(qtd) ? 0 : qtd;
+    // const q = isNaN(qtd) ? 0 : qtd;
+    // Pega valores sempre com parseNumero
+    const vUnit = parseNumero(row.getAttribute('data-vu'));
+    const q = parseNumero(input.value);
 
+    // if (selecionados.has(id)) selecionados.get(id).quantidade = q;
     if (selecionados.has(id)) selecionados.get(id).quantidade = q;
 
+
+    // row.querySelector('[data-subtotal]').textContent = fmt(vUnit * q);
+    // row.querySelector('[data-subtotal]').textContent = fmt(
+    //   parseNumero(vUnit) * parseNumero(q)
+    // );
+    // recalcTotal();
     row.querySelector('[data-subtotal]').textContent = fmt(vUnit * q);
-    recalcTotal();
+recalcTotal();
   });
 
   selecionadosTableBody.addEventListener('click', e => {
