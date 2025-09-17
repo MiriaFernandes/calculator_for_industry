@@ -47,10 +47,6 @@
   background-color: var(--crimson);
 }
 
-.calc-container {
-  /* border: 1px solid red; */
-}
-
 .calc-content {
   border: 2px solid var(--mercury);
   border-radius: 50px;
@@ -78,17 +74,18 @@
 
 }
 
-.card-line{
+.card-line {
 
   padding: 0;
   display: flex;
   gap: 10px;
   display: flex;
   /* background-color: blueviolet; */
+
 }
 
-tr{
-  border:1px solid transparent !important; 
+tr {
+  border: 1px solid transparent !important;
 
 }
 
@@ -106,6 +103,7 @@ tr{
   justify-content: center;
   gap: 10px;
   margin-top: 10px;
+  border: none;
 
 }
 
@@ -126,8 +124,10 @@ tr{
   font-family: "Jost", sans-serif;
   font-weight: 500;
   font-size: 18px;
+  border: none;
 }
-#card-content-nome{
+
+#card-content-nome {
   text-transform: uppercase;
 }
 
@@ -137,17 +137,16 @@ tr{
   font-size: 14px;
   border-radius: 4px;
   border: 1px solid #ccc;
-  background-color:transparent;
+  background-color: transparent;
 }
 
-.quantidade-input:focus{
+.quantidade-input:focus {
   outline: none;
 }
 
 button.btn-primary {
   margin-top: 8px;
   background-color: transparent;
-  color: red;
   border: none;
   padding: 6px 12px;
   border-radius: 4px;
@@ -156,18 +155,88 @@ button.btn-primary {
 
 button.btn-primary:hover {
   background-color: transparent !important;
-  color: red !important;
 }
-/* button.btn-primary:active {
-  background-color: transparent !important;
-  color: red !important;
+
+.calc-footer {
+  /* background-color: aquamarine; */
+  justify-content: space-between;
+  font-family: "Jost", sans-serif;
 }
-button.btn-primary:focus {
-  background-color: transparent !important;
-  color: red !important;
-} */ 
 
+.calc-footer>button {
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--white);
+  text-transform: uppercase;
+  line-height: auto;
+  letter-spacing: -0.26px;
+  padding: 10px 30px;
+  background-color: var(--thunderbird);
+  border-radius: 130px;
+}
+.modal-salvar-produto{
+  background-color:var(--wild_sand);
+  border-radius: 50px;
+  border-radius: 500px;
+}
+.modal-salvar-produto>img{
+  width: 10px;
+  height: 10px;
+}
 
+.modal-salvar-produto>h2{
+  padding-top:30px ;
+  font-family: "Jost", sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 50px;
+  color: var(--thunderbird);
+}
+
+.modal-salvar-produto>p{
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26.3px;
+  color: var(--thunder);
+
+}
+.modal-salvar-produto-input>label{
+  /* background-color: red; */
+  padding-top: 20px;
+  font-family: "Maven Pro", sans-serif;
+  color: var(--shark);
+  font-weight: 500;
+  font-size: 15px;
+}
+.modal-salvar-produto-input>input{
+  background-color: transparent;
+  border: 1px solid var(--dusty_gray) ;
+  border-radius: 10px;
+}
+
+.btn-salvarproduto{
+  justify-content: center !important;
+  align-items: center !important;
+  margin-left:150px !important;
+  background-color: var(--crimson);
+  color: var(--white);
+   font-family: "Jost", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.26px;
+
+}
+.calc-footer>p{
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--thunderbird);
+  font-size: 35px;
+}
+.calc-footer>p>span{
+  color: var(--thunder);
+  font-size: 25px;
+  line-height: 50px;
+}
 
 
 

@@ -61,6 +61,8 @@
 
 {% block content %}
 <!-- {% block main_classes %}w-full{% endblock %} -->
+<div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 space-y-2"></div>
+
 <section class="relative w-full h-screen pt-20 bg-cover bg-center home">
     <!-- Overlay com gradiente escuro + vermelho -->
     <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
@@ -105,70 +107,46 @@
 
                     <tbody>
                         <div id="manualCards" class="px-5 sm:px-7 mb-10 space-y-4">
-                            <!-- Os cards aparecerão aqui -->
-                            <!-- <td colspan="6" class="card-line">
-                                <div class="card">
-                                    <div class="card-content">
 
-                                        <p>Código</p>
-                                        <p>Nome</p>
-                                        <p>Unidade</p>
-                                        <p>Quantidade</p>
-                                        <p>Valor unitário</p>
-                                        <p >Subtotal</p>
-                                        <p>000458</p>
-                                        <p id="card-content-nome">papel kraft 0,30mmx1000mm</p>
-                                        <p>KG</p>
-                                        <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
-                                            value="${ins.quantidade ?? 1}" data-id="${ins.id}" class="quantidade-input">
-                                        <p>R$ 30,00</p>
 
-                                        <p data-subtotal>${fmt(subtotal)}</p>
-
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary " data-rm="${ins.id}" type="button"><img src="../static/image/icon-close-calc.svg" alt=""></button>
-                            </td> -->
-                            
                         </div>
                         <!-- Linhas renderizadas via JS -->
                     </tbody>
                 </table>
             </div>
             <!-- 🔘 Botão externo que abre o modal -->
-            <div class="px-5 sm:px-7 mb-10">
-                <button id="abrirSalvarModal"
-                    class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition font-semibold w-full sm:w-auto">
+            <div class="px-5 sm:px-7 mb-10 flex calc-footer">
+                <button id="abrirSalvarModal">
                     Salvar Produto
                 </button>
-                <div class="text-lg font-semibold text-red-600">
+                <p>
                     Total: <span id="totalValor">R$ 0,00</span>
-                </div>
+                </p>
             </div>
 
             <!-- 🔐 Modal de salvar produto -->
             <!-- 🔐 Modal de salvar produto -->
-            <div id="modal-salvar-produto"
-                class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white w-[90%] max-w-xl p-6 rounded-lg shadow-lg relative">
+            <!-- <div id="modal-salvar-produto"
+                class="hidden fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
+                <div class=" w-[90%] max-w-xl p-6 rounded-lg shadow-lg relative modal-salvar-produto">
 
                     <!-- ❌ Botão de fechar -->
-                    <button id="close-salvar-modal"
-                        class="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-gray-900">
-                        &times;
-                    </button>
+            <!-- <button id="close-salvar-modal"
+                class="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-gray-900">
+                &times;
+            </button> -->
 
-                    <!-- 🧾 Cabeçalho -->
+            <!-- 🧾 Cabeçalho -
                     <h2 class="text-lg font-semibold mb-6">Salvar Produto</h2>
 
-                    <!-- Nome do produto + total -->
+                    <!-- Nome do produto + total -
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-6 mb-6">
                         <input id="nomeProduto" type="text" placeholder="Nome do produto"
                             class="border border-gray-300 rounded px-4 py-2 w-full sm:w-1/2" />
 
                     </div>
 
-                    <!-- Botão interno que realmente salva -->
+                    <!-- Botão interno que realmente salva -
                     <div>
                         <button id="btnSalvarProduto"
                             class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition font-semibold w-full sm:w-auto">
@@ -177,7 +155,43 @@
                     </div>
 
                 </div>
+            </div> -->
+            <div id="modal-salvar-produto"
+                class="hidden fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
+                <div class="w-[90%] max-w-md   rounded-[40px] p-6  shadow-lg relative modal-salvar-produto">
+                    <button id="close-salvar-modal"
+                        class="absolute top-3 right-3 text-2xl font-bold text-gray-500 hover:text-gray-700">
+                        <img src="../static/image/icon-close-calc.svg" alt="">
+                    </button>
+
+                    <!-- 🧾 Cabeçalho -->
+                    <h2 class="text-center uppercase tracking-wide">
+                        Salvar Produto
+                    </h2>
+                    <p class=" text-center">
+                        Informe o nome do produto.
+                    </p>
+
+                    <!-- Campos de entrada -->
+                    <div class="space-y-4 mb-6 modal-salvar-produto-input">
+                        
+                            <label for="nomeProduto" class="block mb-1">NOME</label>
+                            <input id="nomeProduto" type="text" placeholder="Nome do produto"
+                                class="w-full  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" />
+                        
+                    </div>
+
+                    <!-- Botão de salvar -->
+                    
+                        <button id="btnSalvarProduto"
+                            class=" text-white  py-2 px-4  rounded-[130px]  text-center transition btn-salvarproduto">
+                            SALVAR
+                        </button>
+                  
+
+                </div>
             </div>
+
         </div>
     </div>
 
