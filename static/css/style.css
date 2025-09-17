@@ -157,14 +157,14 @@ header h1 {
     text-align: center;
 }
 
-.btn-primary {
+/* .btn-primary {
     background-color: var(--primary-color);
     color: white;
 }
 
 .btn-primary:hover {
     background-color: var(--secondary-color);
-}
+} */
 
 .btn-secondary {
     background-color: white;

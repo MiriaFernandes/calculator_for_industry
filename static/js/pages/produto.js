@@ -139,14 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Abertura do Modal Salvar Produto
- // Modal salvar produto
-if (abrirSalvarModalBtn && fecharSalvarModalBtn && modalSalvarProduto) {
-  abrirSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.remove('hidden'));
-  fecharSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.add('hidden'));
-  modalSalvarProduto.addEventListener('click', (e) => {
-    if (e.target === modalSalvarProduto) modalSalvarProduto.classList.add('hidden');
-  });
-}
+  // Modal salvar produto
+  if (abrirSalvarModalBtn && fecharSalvarModalBtn && modalSalvarProduto) {
+    abrirSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.remove('hidden'));
+    fecharSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.add('hidden'));
+    modalSalvarProduto.addEventListener('click', (e) => {
+      if (e.target === modalSalvarProduto) modalSalvarProduto.classList.add('hidden');
+    });
+  }
 
   // ===== Render =====
   function recalcTotal() {
@@ -165,7 +165,6 @@ if (abrirSalvarModalBtn && fecharSalvarModalBtn && modalSalvarProduto) {
       const tr = document.createElement('tr');
       tr.setAttribute('data-id', ins.id);
       tr.setAttribute('data-vu', String(ins.valor_unitario));
-      tr.className = "casa";
       // tr.innerHTML = `
       //   <td>${ins.nome}</td>
       //   <td>${ins.unidade || ''}</td>
@@ -179,23 +178,32 @@ if (abrirSalvarModalBtn && fecharSalvarModalBtn && modalSalvarProduto) {
       //   <td><button class="btn btn-primary casa " data-rm="${ins.id}" type="button">Remover</button></td>
       // `;
       tr.innerHTML = `
-  <td colspan="6" class="card-row">
-    <div class="card">
-      <div class="card-content">
-        <p>${ins.nome}</p>- ${ins.unidade || ''}<br>
-        Valor unitário: ${fmt(ins.valor_unitario)}<br>
-        Quantidade: 
-        <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
-               value="${ins.quantidade ?? 1}" data-id="${ins.id}"
-               class="quantidade-input">
-        <br>
-        <p data-subtotal>Subtotal: ${fmt(subtotal)}</p>
-        <br>
-        <button class="btn btn-primary casa" data-rm="${ins.id}" type="button">X</button>
-      </div>
-    </div>
-  </td>
-`;
+      <td colspan="6" class="card-line">
+        <div class="card">
+          <div class="card-content">
+            
+            <p>Código</p>
+            <p>Nome</p>
+            <p>Unidade</p>
+            <p>Valor unitário</p>
+            <p>Quantidade</p>
+            <p>Subtotal</p>
+            <p>${ins.codigo}</p>
+            <p >${ins.nome}</p>
+            <p>${ins.unidade || ''}</p>
+            <p> ${fmt(ins.valor_unitario)}</p>
+            <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
+                  value="${ins.quantidade ?? 1}" data-id="${ins.id}"
+                  class="quantidade-input">
+           
+            <p data-subtotal>${fmt(subtotal)}</p>
+           
+          </div>
+        </div>
+        <button class="btn btn-primary " data-rm="${ins.id}" type="button"><img src="../static/image/icon-close-calc.svg" alt=""></button>
+      </td>
+      
+    `;
       selecionadosTableBody.appendChild(tr);
     });
     recalcTotal();

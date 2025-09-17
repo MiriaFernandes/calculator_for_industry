@@ -22,8 +22,8 @@
         </ul>
 
         <div class="flex items-center space-x-4 login-icon">
-            <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6  hidden lg:block"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg id="open-modal-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6  hidden lg:block" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M5.121 17.804A9.004 9.004 0 0112 15c2.21 0 4.21.805 5.879 2.121M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -82,22 +82,18 @@
     </div>
 </section>
 
-<!-- WRAPPER FULL-BLEED: ocupa a largura total mesmo dentro de um main com max-w -->
-<!-- FULL-BLEED sem overflow -->
+
 <section class="relative mx-[calc(50%-50vw)] w-[100vw] overflow-x-clip py-10 sm:py-12 bg-transparent calc-container">
     <div class="px-4 sm:px-6">
         <div class="ring-1 bg-white rounded-xl shadow calc-content">
-
-            <!-- Cabeçalho -->
             <header class="flex items-center justify-between gap-4 p-4 sm:p-7">
                 <div class="flex items-center gap-3 sm:gap-4">
                     <img src="/static/image/illustration-calc (1).svg" alt="Mascote da Calculadora"
                         class="h-16 sm:h-20 md:h-24 lg:h-28 w-auto shrink-0" />
                 </div>
 
-                <!-- Botão para abrir modal -->
                 <button type="button"
-                    class="btn-materia-prima inline-flex items-center gap-2 text-xs uppercase tracking-wide hover:text-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-full">
+                    class="btn-materia-prima inline-flex items-center gap-2 text-xs uppercase tracking-wide hover:text-neutral-800 focus:outline-none focus-visible:ring-2  ">
                     <p>Adicionar matéria-prima</p>
                     <span><img src="/static/image/icon-plus.svg" alt="Ícone de adicionar" /></span>
                 </button>
@@ -110,6 +106,30 @@
                     <tbody>
                         <div id="manualCards" class="px-5 sm:px-7 mb-10 space-y-4">
                             <!-- Os cards aparecerão aqui -->
+                            <!-- <td colspan="6" class="card-line">
+                                <div class="card">
+                                    <div class="card-content">
+
+                                        <p>Código</p>
+                                        <p>Nome</p>
+                                        <p>Unidade</p>
+                                        <p>Quantidade</p>
+                                        <p>Valor unitário</p>
+                                        <p >Subtotal</p>
+                                        <p>000458</p>
+                                        <p id="card-content-nome">papel kraft 0,30mmx1000mm</p>
+                                        <p>KG</p>
+                                        <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
+                                            value="${ins.quantidade ?? 1}" data-id="${ins.id}" class="quantidade-input">
+                                        <p>R$ 30,00</p>
+
+                                        <p data-subtotal>${fmt(subtotal)}</p>
+
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary " data-rm="${ins.id}" type="button"><img src="../static/image/icon-close-calc.svg" alt=""></button>
+                            </td> -->
+                            
                         </div>
                         <!-- Linhas renderizadas via JS -->
                     </tbody>
