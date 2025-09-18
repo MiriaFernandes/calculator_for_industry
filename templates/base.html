@@ -49,12 +49,13 @@
       <img src="/static/image/logotipo-red.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
 
       <ul class="hidden lg:flex space-x-6 navbar-links text-white">
-        <li><a href="{{ url_for('index') }}">Dashboard</a></li>
-        <li><a>Upload Nota Fiscal</a></li>
-        <li><a href="{{ url_for('cadastro') }}">Cadastro Manual</a></li>
-        <li><a href="#">Calculadora</a></li>
-        <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
-        <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
+          <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+            <li><a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a></li>
+            <li><a href="{{ url_for('cadastro') }}">Cadastro Manual</a></li>
+            <li><a href="{{ url_for('index') }}" id="link-calculadora">Calculadora</a></li>
+            <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li> -->
+            <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
+            <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
       </ul>
 
       <div class="flex items-center space-x-4">
@@ -208,6 +209,19 @@
   <script src="{{ url_for('static', filename='js/pages/menu.js') }}"></script>
 
   {% block scripts %}
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const linkCalculadora = document.getElementById("link-calculadora");
+    const calcSection = document.querySelector(".calc-container");
+
+    if (linkCalculadora && calcSection) {
+      linkCalculadora.addEventListener("click", (e) => {
+        e.preventDefault(); // evita o reload da página
+        calcSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  });
+</script>
   <script>
     (function () {
       const path = window.location.pathname.replace(/\/$/, "");

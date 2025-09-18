@@ -100,19 +100,20 @@ document.addEventListener('DOMContentLoaded', () => {
       div.className = 'insumo-item';
       div.innerHTML = `
         <div class="insumo-info">
-          <div style="font-weight:600">${it.nome}</div>
-          <div style="color:var(--gray-color); font-size:.9rem">
+          <p>${it.nome}</p>
+          <p>
             ${it.codigo ? `Cód: ${it.codigo} · ` : ''}${it.unidade || ''} · ${fmt(it.valor_unitario)}
-          </div>
+          </p>
         </div>
-        <div class="insumo-actions">
-          <button class="btn btn-primary" data-add="${it.id}" type="button">Selecionar</button>
+        <div class="insumo-actions ">
+          <button data-add="${it.id}" type="button">Adicionar</button>
         </div>
       `;
       div.querySelector('[data-add]').addEventListener('click', () => {
         if (!selecionados.has(it.id)) {
           selecionados.set(it.id, {
             id: it.id,
+            codigo: it.codigo, // <-- adicionado
             nome: it.nome,
             unidade: it.unidade,
             valor_unitario: Number(it.valor_unitario || 0),
@@ -174,18 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr = document.createElement('tr');
       tr.setAttribute('data-id', ins.id);
       tr.setAttribute('data-vu', String(ins.valor_unitario));
-      // tr.innerHTML = `
-      //   <td>${ins.nome}</td>
-      //   <td>${ins.unidade || ''}</td>
-      //   <td>${fmt(ins.valor_unitario)}</td>
-      //   <td>
-      //     <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
-      //            value="${ins.quantidade ?? 1}" data-id="${ins.id}"
-      //            class="quantidade-input" style="width:110px;">
-      //   </td>
-      //   <td data-subtotal>${fmt(subtotal)}</td>
-      //   <td><button class="btn btn-primary casa " data-rm="${ins.id}" type="button">Remover</button></td>
-      // `;
       tr.innerHTML = `
       <td colspan="6" class="card-line">
         <div class="card">

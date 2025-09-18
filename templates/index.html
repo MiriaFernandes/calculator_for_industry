@@ -15,9 +15,10 @@
         <ul class="hidden lg:flex space-x-6 navbar-links">
             <li><a href="{{ url_for('index') }}">Dashboard</a></li>
             <li><a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a></li>
-            <li><a href="#">Cadastro Manual</a></li>
-            <li><a href="#">Calculadora</a></li>
-            <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li>
+            <li><a href="{{ url_for('cadastro') }}">Cadastro Manual</a></li>
+            <li><a href="#" id="link-calculadora">Calculadora</a></li>
+            <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li> -->
+            <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
             <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
         </ul>
 
@@ -47,12 +48,13 @@
         </div>
 
         <div class="flex flex-col space-y-4 text-sm font-medium">
-            <a href="#">Dashboard</a>
-            <a href="#">Upload Nota Fiscal</a>
-            <a href="#">Cadastro Manual</a>
-            <a href="#">Calculadora</a>
-            <a href="#">Produtos Finais</a>
-            <a href="#">Matérias-Primas</a>
+          <a href="{{ url_for('index') }}">Dashboard</a>
+            <a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a>
+            <a href="{{ url_for('cadastro') }}">Cadastro Manual</a>
+            <a href="#" id="link-calculadora">Calculadora</a>
+            <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a> </li>-->
+            <a href="{{ url_for('meusProdutos') }}">Produtos Finais</a>
+            <a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a>
             <a href="#" id="open-modal-mobile" class="hover:text-gray-300 font-semibold transition">Sign In</a>
         </div>
     </nav>
@@ -123,41 +125,8 @@
                     Total: <span id="totalValor">R$ 0,00</span>
                 </p>
             </div>
-
-            <!-- 🔐 Modal de salvar produto -->
-            <!-- 🔐 Modal de salvar produto -->
-            <!-- <div id="modal-salvar-produto"
-                class="hidden fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
-                <div class=" w-[90%] max-w-xl p-6 rounded-lg shadow-lg relative modal-salvar-produto">
-
-                    <!-- ❌ Botão de fechar -->
-            <!-- <button id="close-salvar-modal"
-                class="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-gray-900">
-                &times;
-            </button> -->
-
-            <!-- 🧾 Cabeçalho -
-                    <h2 class="text-lg font-semibold mb-6">Salvar Produto</h2>
-
-                    <!-- Nome do produto + total -
-                    <div class="flex flex-col sm:flex-row justify-between items-center gap-6 mb-6">
-                        <input id="nomeProduto" type="text" placeholder="Nome do produto"
-                            class="border border-gray-300 rounded px-4 py-2 w-full sm:w-1/2" />
-
-                    </div>
-
-                    <!-- Botão interno que realmente salva -
-                    <div>
-                        <button id="btnSalvarProduto"
-                            class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition font-semibold w-full sm:w-auto">
-                            Salvar Produto
-                        </button>
-                    </div>
-
-                </div>
-            </div> -->
             <div id="modal-salvar-produto"
-                class="hidden fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
+                class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div class="w-[90%] max-w-md   rounded-[40px] p-6  shadow-lg relative modal-salvar-produto">
                     <button id="close-salvar-modal"
                         class="absolute top-3 right-3 text-2xl font-bold text-gray-500 hover:text-gray-700">
@@ -174,20 +143,20 @@
 
                     <!-- Campos de entrada -->
                     <div class="space-y-4 mb-6 modal-salvar-produto-input">
-                        
-                            <label for="nomeProduto" class="block mb-1">NOME</label>
-                            <input id="nomeProduto" type="text" placeholder="Nome do produto"
-                                class="w-full  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" />
-                        
+
+                        <label for="nomeProduto" class="block mb-1">NOME</label>
+                        <input id="nomeProduto" type="text" placeholder="Nome do produto"
+                            class="w-full  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" />
+
                     </div>
 
                     <!-- Botão de salvar -->
-                    
-                        <button id="btnSalvarProduto"
-                            class=" text-white  py-2 px-4  rounded-[130px]  text-center transition btn-salvarproduto">
-                            SALVAR
-                        </button>
-                  
+
+                    <button id="btnSalvarProduto"
+                        class=" text-white  py-2 px-4  rounded-[130px]  text-center transition btn-salvarproduto">
+                        SALVAR
+                    </button>
+
 
                 </div>
             </div>
@@ -196,33 +165,64 @@
     </div>
 
     <!-- 🔐 Modal de matéria-prima com busca e formulário -->
-    <div id="modal-materia-prima"
+    <!-- <div id="modal-materia-prima"
         class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white w-[90%] max-w-2xl p-6 rounded-lg shadow-lg relative max-h-[90vh] overflow-y-auto">
 
-            <!-- ❌ Botão de fechar -->
+            <!-- ❌ Botão de fechar 
             <button id="close-modal" class="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-gray-900">
                 &times;
             </button>
 
-            <!-- 🧾 Cabeçalho -->
+            <!-- 🧾 Cabeçalho 
             <h2 class="text-lg font-semibold mb-4">Adicionar Matéria-Prima</h2>
 
-            <!-- 🔍 Barra de busca -->
+            <!-- 🔍 Barra de busca -
             <div class="flex items-center gap-4 mb-6">
                 <input id="searchInput" type="text" placeholder="Buscar matéria-prima..."
                     class="border border-gray-300 rounded px-4 py-2 w-full" />
                 <button id="clearSearch" class="text-sm text-red-600 hover:underline">Limpar</button>
             </div>
 
-            <!-- 📦 Lista de insumos disponíveis -->
+            <!-- 📦 Lista de insumos disponíveis -
             <div id="itensList" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <!-- Insumos renderizados via JS -->
+                <!-- Insumos renderizados via JS --
             </div>
 
 
 
 
+        </div>
+    </div> -->
+
+    <div id="modal-materia-prima" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="w-[90%] max-w-3xl p-8 rounded-[30px] shadow-lg relative max-h-[90vh] overflow-y-auto text-center modal-add-materia-prima">
+            <button id="close-modal" class="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-black">
+                <img src="../static/image/icon-close-calc.svg" alt="">
+            </button>
+
+            <!-- 🧾 Cabeçalho -->
+            <h2 class=" uppercase leading-snug">
+                Adicionar <br/>Matéria-Prima
+            </h2>
+            <p class=" mt-2 mb-6">
+                Informe o nome da matéria-prima para adicioná-la à calculadora.
+            </p>
+
+            <!-- 🔍 Barra de busca -->
+            <div class="flex items-center gap-3 mb-8 modal-add-materia-prima-search">
+                <input id="searchInput" type="text" placeholder="Buscar matéria-prima..."
+                    class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-red-500" />
+                <button id="clearSearch" class="uppercase">Limpar</button>
+            </div>
+
+            <!-- 📦 Lista de insumos -->
+            <div id="itensList" class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left">
+                <!-- Exemplo de item -->
+                
+
+                
+            </div>
         </div>
     </div>
 </section>
@@ -231,5 +231,18 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const linkCalculadora = document.getElementById("link-calculadora");
+    const calcSection = document.querySelector(".calc-container");
+
+    if (linkCalculadora && calcSection) {
+      linkCalculadora.addEventListener("click", (e) => {
+        e.preventDefault(); // evita o reload da página
+        calcSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  });
+</script>
 <script type="module" src="{{ url_for('static', filename='js/pages/produto.js') }}"></script>
 {% endblock %}

@@ -74,6 +74,76 @@
 
 }
 
+.modal-add-materia-prima {
+  background-color: var(--wild_sand);
+  border: 1px solid var(--mercury);
+}
+
+
+.modal-add-materia-prima>h2 {
+  font-family: "Jost", sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--thunderbird);
+}
+
+.modal-add-materia-prima>p {
+  font-family: "Jost", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--thunder);
+}
+
+.modal-add-materia-prima-search>input {
+  background-color: transparent;
+  border: 1px solid var(--dusty_gray);
+  border-radius: 10px;
+}
+
+.modal-add-materia-prima-search>button {
+  font-family: "Maven Pro", sans-serif;
+  color: var(--shark);
+  font-weight: 500;
+}
+
+.insumo-info {
+  font-family: "Maven Pro", sans-serif;
+  color: var(--shark);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.insumo-actions>button {
+  font-family: "Jost", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.26px;
+  color: var(--white);
+  padding: 10px 25px;
+  text-transform: uppercase;
+  background-color: var(--crimson);
+  border-radius: 130px;
+}
+
+/* Barra de rolagem do modal */
+.modal-add-materia-prima::-webkit-scrollbar {
+  width: 8px;
+  /* largura da barra */
+}
+
+.modal-add-materia-prima::-webkit-scrollbar-track {
+  background: transparent;
+  /* fundo da trilha */
+  border-radius: 10px;
+}
+
+.modal-add-materia-prima::-webkit-scrollbar-thumb {
+  background: var( --black_10);
+  /* vermelho igual ao botão */
+  border-radius: 10px;
+}
+
+
 .card-line {
 
   padding: 0;
@@ -174,18 +244,20 @@ button.btn-primary:hover {
   background-color: var(--thunderbird);
   border-radius: 130px;
 }
-.modal-salvar-produto{
-  background-color:var(--wild_sand);
+
+.modal-salvar-produto {
+  background-color: var(--wild_sand);
   border-radius: 50px;
-  border-radius: 500px;
+  border: 1px solid var(--mercury);
 }
-.modal-salvar-produto>img{
+
+.modal-salvar-produto>img {
   width: 10px;
   height: 10px;
 }
 
-.modal-salvar-produto>h2{
-  padding-top:30px ;
+.modal-salvar-produto>h2 {
+  padding-top: 30px;
   font-family: "Jost", sans-serif;
   font-weight: 700;
   font-size: 30px;
@@ -193,14 +265,15 @@ button.btn-primary:hover {
   color: var(--thunderbird);
 }
 
-.modal-salvar-produto>p{
+.modal-salvar-produto>p {
   font-weight: 400;
   font-size: 16px;
   line-height: 26.3px;
   color: var(--thunder);
 
 }
-.modal-salvar-produto-input>label{
+
+.modal-salvar-produto-input>label {
   /* background-color: red; */
   padding-top: 20px;
   font-family: "Maven Pro", sans-serif;
@@ -208,31 +281,34 @@ button.btn-primary:hover {
   font-weight: 500;
   font-size: 15px;
 }
-.modal-salvar-produto-input>input{
+
+.modal-salvar-produto-input>input {
   background-color: transparent;
-  border: 1px solid var(--dusty_gray) ;
+  border: 1px solid var(--dusty_gray);
   border-radius: 10px;
 }
 
-.btn-salvarproduto{
+.btn-salvarproduto {
   justify-content: center !important;
   align-items: center !important;
-  margin-left:150px !important;
+  margin-left: 150px !important;
   background-color: var(--crimson);
   color: var(--white);
-   font-family: "Jost", sans-serif;
+  font-family: "Jost", sans-serif;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: -0.26px;
 
 }
-.calc-footer>p{
+
+.calc-footer>p {
   font-weight: 700;
   text-transform: uppercase;
   color: var(--thunderbird);
   font-size: 35px;
 }
-.calc-footer>p>span{
+
+.calc-footer>p>span {
   color: var(--thunder);
   font-size: 25px;
   line-height: 50px;
