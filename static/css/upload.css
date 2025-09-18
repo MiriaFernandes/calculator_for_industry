@@ -1,0 +1,156 @@
+@import url("./global.css");
+
+.banner-upload-container {
+    padding: 0 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+}
+
+.banner-upload-content {
+    padding: 13px 24px;
+    height: 286px;
+}
+
+.banner-upload-content>h2 {
+    padding: 80px 0 0 0;
+    text-align: right;
+    font-family: "Maven Pro", sans-serif;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 50px;
+    color: var(--white);
+    width: 800px;
+}
+
+.banner-upload-container>form {
+    font-family: "Jost", sans-serif;
+    justify-content: right;
+    /* background-color: green; */
+    padding: 0 0;
+    flex-direction: column;
+    font-weight: 500;
+}
+
+.banner-upload-container>form>label {
+    background-color: var(--shark);
+    padding: 18px 70px;
+    color: var(--white);
+    font-size: 16px;
+    letter-spacing: -0.32px;
+}
+
+.banner-upload-container>form>p {
+
+    font-size: 13px;
+    padding-right: 1%;
+    color: var(--black_40);
+    line-height: 18px;
+}
+
+.upload-workspace-container {
+    /* background-color: red; */
+    height: 486px;
+    border: 1px solid var(--mercury);
+    box-shadow: 0 4 4 0 rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.upload-workspace-container>img {
+    /* padding: 102px 40%; */
+    width: 250px;
+    height: 246px;
+}
+
+.upload-workspace-content {
+    /* background-color: rebeccapurple; */
+    flex-direction: column;
+    /* justify-content: end; */
+}
+
+.upload-workspace-btn-close {
+    width: 70px;
+    margin-left: 90%;
+}
+
+
+.upload-workspace-btn-close>img {
+    width: 30px;
+    height: 30px;
+}
+
+.upload-modal-closeNf{
+    background-color: var(--wild_sand);
+    border: 2px solid var(--mercury);
+    font-family: "Jost", sans-serif;
+    text-align: center;
+}
+
+.upload-modal-closeNf>h3{
+    color:var(--thunderbird);
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 50px;
+}
+
+.upload-modal-closeNf>p{
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 26.3px;
+    color: var(--thunder);
+}
+
+.upload-wrraper-closeNf{
+    /* background-color: blue; */
+    font-family: "Jost", sans-serif;
+    color: var(--white);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: -0.26px;
+
+}
+
+#nfCloseCancel{
+    background-color: var(--black_40);
+}
+#nfCloseConfirm{
+    background-color: var(--crimson);
+}
+
+
+.upload-workspace-table{
+    font-family: "Maven Pro", sans-serif;
+}
+.upload-workspace-table>thead>tr {
+    border-bottom: 2px solid var(--pearl_bush);
+    border-radius: 10px;
+}
+
+.upload-workspace-table>thead>tr>th {
+    color: var(--shark);
+    font-weight:500;
+    font-size: 18px;
+    line-height: 13px;
+
+}
+
+.upload-workspace-table>tbody{
+    color: var(  --cod_gray_50);
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.upload-btnEnviarItens{
+    background-color:var(--thunderbird);
+    padding: 14px 23px;
+    margin: 0 auto;
+    font-family: "Jost", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: -0.26px;
+    color: var(--white);
+}

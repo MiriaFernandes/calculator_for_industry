@@ -20,7 +20,7 @@
 
   <!-- Estilos específicos da página -->
   {% block styles %}{% endblock %}
-  <style>
+  <!-- <style>
     .login-modal-content {
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
@@ -37,7 +37,7 @@
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
-  </style>
+  </style> -->
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -48,14 +48,14 @@
     <nav class="flex items-center justify-between">
       <img src="/static/image/logotipo-red.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
 
-      <ul class="hidden lg:flex space-x-6 navbar-links text-white">
-          <li><a href="{{ url_for('index') }}">Dashboard</a></li>
-            <li><a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a></li>
-            <li><a href="{{ url_for('cadastro') }}">Cadastro Manual</a></li>
-            <li><a href="{{ url_for('index') }}" id="link-calculadora">Calculadora</a></li>
-            <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li> -->
-            <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
-            <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
+      <ul class="hidden lg:flex space-x-6 navbar-links">
+        <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+        <li><a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a></li>
+        <li><a href="{{ url_for('cadastro') }}">Cadastro Manual</a></li>
+        <li><a href="{{ url_for('index') }}" id="link-calculadora">Calculadora</a></li>
+        <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li> -->
+        <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
+        <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
       </ul>
 
       <div class="flex items-center space-x-4">
@@ -84,12 +84,13 @@
       </div>
 
       <div class="flex flex-col space-y-4 text-sm font-medium">
-        <a href="#">Dashboard</a>
-        <a href="#">Upload Nota Fiscal</a>
-        <a href="#">Cadastro Manual</a>
-        <a href="#">Calculadora</a>
-        <a href="#">Produtos Finais</a>
-        <a href="#">Matérias-Primas</a>
+        <a href="{{ url_for('index') }}">Dashboard</a>
+        <a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a>
+        <a href="{{ url_for('cadastro') }}">Cadastro Manual</a>
+        <a href="#" id="link-calculadora">Calculadora</a>
+        <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a> </li>-->
+        <a href="{{ url_for('meusProdutos') }}">Produtos Finais</a>
+        <a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a>
         <a href="#" id="open-modal-mobile" class="hover:text-gray-300 font-semibold transition">Sign In</a>
       </div>
     </nav>
@@ -210,18 +211,18 @@
 
   {% block scripts %}
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const linkCalculadora = document.getElementById("link-calculadora");
-    const calcSection = document.querySelector(".calc-container");
+    document.addEventListener("DOMContentLoaded", () => {
+      const linkCalculadora = document.getElementById("link-calculadora");
+      const calcSection = document.querySelector(".calc-container");
 
-    if (linkCalculadora && calcSection) {
-      linkCalculadora.addEventListener("click", (e) => {
-        e.preventDefault(); // evita o reload da página
-        calcSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    }
-  });
-</script>
+      if (linkCalculadora && calcSection) {
+        linkCalculadora.addEventListener("click", (e) => {
+          e.preventDefault(); // evita o reload da página
+          calcSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    });
+  </script>
   <script>
     (function () {
       const path = window.location.pathname.replace(/\/$/, "");
@@ -279,7 +280,7 @@
     });
   </script>
   {% endblock %}
-    <script src="{{ url_for('static', filename='js/shared/toast.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/shared/toast.js') }}"></script>
 </body>
 
 </html>

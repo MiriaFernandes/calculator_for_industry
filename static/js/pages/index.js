@@ -186,9 +186,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Colunas do seu HTML
       const tds = [
-        `<td class="px-4 py-2">${item.codigo ?? ''}</td>`,
+        `<td class="px-4 py-2 ">${item.codigo ?? ''}</td>`,
         `<td class="px-4 py-2">${item.data_emissao ?? ''}</td>`,
         `<td class="px-4 py-2">${item.nome ?? ''}</td>`,
+        `<td class="px-4 py-2">${item.fornecedor ?? ''}</td>`,
         `<td class="px-4 py-2">${item.unidade ?? ''}</td>`,
         `<td class="px-4 py-2">R$ ${Number(item.valor_unitario || 0).toFixed(2)}</td>`
       ];
@@ -404,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const payload = { itens: itensParaEnviar };
 
       const originalText = btnEnviarItens.textContent;
-      btnEnviarItens.textContent = 'Validando e enviando...';
+      btnEnviarItens.textContent = 'VALIDANDO E ENVIANDO...';
       btnEnviarItens.disabled = true;
 
       try {

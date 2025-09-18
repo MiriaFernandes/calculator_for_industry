@@ -1,83 +1,60 @@
 {% extends "base.html" %}
 
-{% block title %}Início{% endblock %}
+{% block title %}Upload{% endblock %}
+{% block styles %}
+{{ super() }} {# Garante que os estilos do base.html também sejam incluídos #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+{% endblock %}
 
 {% block content %}
-<div class="relative w-screen mx-[calc(50%-50vw)] overflow-x-clip">
+<section class="relative w-screen mx-[calc(50%-50vw)] overflow-x-clip">
 
     <!-- Banner -->
     <section class="w-full pt-24">
-        <div class="px-4 sm:px-6 lg:px-12">
-            <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-red-700 via-red-600 to-neutral-900 shadow">
-                <div class="flex  justify-center justify-around  gap-6 px-6 py-10">
-                    <div class="col-span-12 md:col-span-3 flex justify-center md:justify-start">
-                        <img src="/static/image/illustration-upload.svg" alt="Ilustração nota fiscal"
-                            class="h-28 sm:h-36 md:h-40 w-auto">
-                    </div>
-                    <div class="col-span-12 md:col-span-9 text-center md:text-left">
-                        <h2 class="text-white text-xl sm:text-2xl md:text-3xl font-semibold leading-snug">
-                            TRANSFORME SUA <span class="font-extrabold">NOTA FISCAL</span><br class="hidden sm:block" />
-                            EM INFORMAÇÕES VALIOSAS
-                        </h2>
-                    </div>
+        <div class="banner-upload-container">
+            <div class="rounded-[50px] overflow-hidden bg-gradient-to-r from-red-700 via-red-600 to-neutral-900 shadow">
+                <div class="flex  justify-center justify-between  gap-6  banner-upload-content">
+                    <img src="/static/image/illustration-upload.svg" alt="Ilustração nota fiscal" class="">
+                    <h2 class="uppercase">
+                        transforme sua nota fiscal em informações valiosas
+                    </h2>
                 </div>
             </div>
 
-         
-            <form id="uploadForm" class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6">
-
-                <!-- campo de seleção -->
-                <div class="flex-1 flex items-center gap-3">
-                    <label for="xmlFile"
-                        class="cursor-pointer rounded-full bg-neutral-800 px-6 py-2 text-white text-sm font-semibold shadow hover:bg-neutral-700">
-                        Escolher Arquivo
-                    </label>
-
-                    <input id="xmlFile" type="file" accept=".xml" class="sr-only">
-                </div>
-
-               </form>
+            <form id="uploadForm" class="mt-4 flex  sm:flex-row sm:items-end sm:justify-between  px-6">
+                <label for="xmlFile" class="cursor-pointer rounded-[20px] uppercase shadow hover:bg-neutral-700">
+                    uplaod
+                </label>
+                <input id="xmlFile" type="file" accept=".xml" class="sr-only">
+                <p>apenas arquivos pdf ou .xml</p>
+            </form>
         </div>
     </section>
 
     <!-- Card branco -->
     <section class="w-full py-6">
-        <div class="px-4 sm:px-6 lg:px-12">
-            <div class="relative rounded-2xl bg-white shadow p-8 min-h-[300px]">
+        <div class="px-4 sm:px-6 lg:px-12 flex flex-col gap-4">
+            <div class="relative rounded-[25px]  shadow p-8 min-h-[300px] upload-workspace-container">
 
-                <!-- Estado inicial -->
-                <!-- <div id="emptyState" class="text-center">
-                    <h3 class="text-5xl font-extrabold tracking-widest text-red-200">MCM</h3>
-                    <p class="text-2xl font-semibold tracking-widest text-red-200">BOBINAS</p>
-                </div> -->
+                <img id="emptyState" src="../static/image/img-marcad'agua.svg" alt="">
 
                 <!-- Itens da Nota -->
-                <div id="itensContainer" class="hidden w-full">
-
-                    <!-- Linha de botões de ação -->
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex gap-3">
-                            <!-- <button id="btnCriarProduto"
-                                class="rounded-full bg-neutral-700 px-4 py-2 text-sm text-white hover:bg-neutral-600">
-                                Criar Novo Produto
-                            </button> -->
-                            <button id="btnFecharNota"
-                                class="hidden rounded-full bg-neutral-700 px-4 py-2 text-sm text-white hover:bg-neutral-600">
-                                x                            </button>
-                        </div>
-
-                    </div>
+                <div id="itensContainer" class="hidden w-full upload-workspace-content flex">
+                    <button id="btnFecharNota" class="hidden  upload-workspace-btn-close">
+                        <img src="../static/image/icon-close-calc.svg" alt="">
+                    </button>
 
                     <!-- Tabela -->
-                    <div class="overflow-x-auto">
-                        <table id="itensTable" class="min-w-full text-sm">
+                    <div class="overflow-x-auto  ">
+                        <table id="itensTable" class="min-w-full upload-workspace-table">
                             <thead>
-                                <tr class="text-neutral-600 border-b">
-                                    <th class="px-4 py-3 text-left">Código</th>
-                                    <th class="px-4 py-3 text-left">Data Emissão</th>
-                                    <th class="px-4 py-3 text-left">Descrição</th>
-                                    <th class="px-4 py-3 text-left">Unidade</th>
-                                    <th class="px-4 py-3 text-left">Valor Unitário</th>
+                                <tr class="text-neutral-600 border-b uppercase">
+                                    <th class="px-4 py-3 text-center">Código</th>
+                                    <th class="px-4 py-3 ">Data Emissão</th>
+                                    <th class="px-4 py-3 ">Descrição</th>
+                                    <th class="px-4 py-3 ">Fornecedor</th>
+                                    <th class="px-4 py-3">Unidade</th>
+                                    <th class="px-4 py-3 ">Valor Unitário</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,35 +70,28 @@
                 </div>
             </div>
 
-            <!-- Botão cadastrar -->
-            <div class="mt-6 flex justify-center">
-                 <button id="btnEnviarItens" class="rounded-full bg-red-600 px-6 py-2 text-white text-sm font-semibold shadow hover:bg-red-700" style="margin-bottom: 1rem;">
-                    CADASTRAR NOTA FISCAL
-                </button>
-                <!-- <button type="button" id="btnEnviarItens"
-                    class="rounded-full bg-red-600 px-6 py-2 text-white text-sm font-semibold shadow hover:bg-red-700">
-                    
-                    CADASTRAR NOTA FISCAL
-                </button> -->
-                  <!-- <button id="btnEnviarItens" class="btn btn-secondary send-btn hidden" style="margin-bottom: 1rem;">
-                    Enviar itens para o banco de dados
-                </button> -->
+            <button id="btnEnviarItens" class="rounded-full  hover:bg-red-700  upload-btnEnviarItens">
+                CADASTRAR NOTA FISCAL
+            </button>
+        </div>
+    </section>
+    
+    <!-- Modal fechar nota -->
+    <div id="nfCloseModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class=" rounded-[25px] p-6 w-full max-w-md upload-modal-closeNf">
+            <h3 class="uppercase">Fechar Nota Fiscal?</h3>
+            <p class="mb-4">Isso vai limpar a tabela e remover os itens salvos desta NF.</p>
+            <div class="flex justify-center gap-3 upload-wrraper-closeNf  ">
+                <button id="nfCloseCancel" class="rounded-[130px]  uppercase px-4 py-2 text-sm hover:bg-neutral-400">Cancelar</button>
+                <button id="nfCloseConfirm" class="rounded-[130px]  uppercase px-4 py-2 text-sm text-white hover:bg-red-700">Fechar</button>
             </div>
         </div>
-    </section>
-
-    <!-- Produtos Criados -->
-    <section id="produtosCriados" class="w-full py-6 hidden">
-        <div class="px-4 sm:px-6 lg:px-12">
-            <h2 class="text-lg font-semibold mb-4">Produtos Criados Recentemente</h2>
-            <div id="produtosList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-        </div>
-    </section>
-
+    </div>
+    
     <!-- Modal duplicata -->
     <div id="modalDuplicata" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 class="text-lg font-bold mb-2">Não foi possível enviar</h3>
+            <h3 class="text-lg font-bold mb-2">Não foi possível envSSSiar</h3>
             <p class="mb-4">Foram encontrados itens já cadastrados com o mesmo <strong>valor_unitário</strong> e
                 <strong>data_emissão</strong>:
             </p>
@@ -131,23 +101,18 @@
             </button>
         </div>
     </div>
-
-    <!-- Modal fechar nota -->
-    <div id="nfCloseModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-        aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 class="text-lg font-bold mb-2">Fechar Nota Fiscal?</h3>
-            <p class="mb-4">Isso vai limpar a tabela e remover os itens salvos desta NF.</p>
-            <div class="flex justify-end gap-3">
-                <button id="nfCloseCancel"
-                    class="rounded bg-neutral-300 px-4 py-2 text-sm hover:bg-neutral-400">Cancelar</button>
-                <button id="nfCloseConfirm"
-                    class="rounded bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700">Fechar</button>
-            </div>
+    
+    <!-- Produtos Criados -->
+    <section id="produtosCriados" class="w-full py-6 hidden">
+        <div class="px-4 sm:px-6 lg:px-12">
+            <h2 class="text-lg font-semibold mb-4">Produtos Criados Recentemente</h2>
+            <div id="produtosList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
-    </div>
+    </section>
 
-</div>
+
+
+</section>
 {% endblock %}
 
 {% block scripts %}
