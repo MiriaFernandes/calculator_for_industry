@@ -164,46 +164,65 @@ def listar_itens():
         return jsonify({'error': str(e)}), 500
 
 @app.route("/cadastro", methods=["GET", "POST"])
+# app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
+    print("🔥 Função /cadastro foi chamada")
+
     if request.method == "POST":
         try:
-            # Captura os campos do formulário
-            codigo = request.form.get("codigo")
-            nome = request.form.get("nome")
-            fornecedor = request.form.get("fornecedor")
-            cnpj = request.form.get("cnpj")
-            descricao = request.form.get("descricao")
-            data_compra = request.form.get("data_compra")
-            quantidade = request.form.get("quantidade")
-            medida = request.form.get("medida")
-            valor_unitario = request.form.get("valor_unitario")
+            print("[HIT] /cadastro POST")
 
-            # Monta o documento
+            codigo       = (request.form.get("codigo") or "").strip()
+            nome         = (request.form.get("nome") or "").strip()
+            fornecedor   = (request.form.get("fornecedor") or "").strip()
+            cnpj         = (request.form.get("cnpj") or "").strip()
+            descricao    = (request.form.get("descricao") or "").strip()
+            data_compra  = (request.form.get("data_compra") or "").strip()
+            unidade_in   = (request.form.get("unidade") or request.form.get("medida") or "").strip()
+            quantidade   = request.form.get("quantidade")
+            valor_unit   = request.form.get("valor_unitario")
+            categoria    = (request.form.get("categoria") or "").strip()
+
+            quantidade  = float(str(quantidade).replace(",", ".").strip()) if quantidade else None
+            valor_unit  = float(str(valor_unit).replace(",", ".").strip()) if valor_unit else None
+            unidade     = unidade_in if unidade_in else None
+
+            doc_ref = db.collection("itens").document()
+
             item_data = {
                 "codigo": codigo,
                 "nome": nome,
                 "fornecedor": fornecedor,
                 "cnpj": cnpj,
                 "descricao": descricao,
+                "categoria": categoria,
+
                 "data_compra": data_compra,
-                "quantidade": float(quantidade) if quantidade else None,
-                "medida": medida,
-                "valor_unitario": float(valor_unitario) if valor_unitario else None,
+                "data_emissao": data_compra,
+
+                # 🔑 Timestamp do Firestore
+                "data_criacao": firestore.SERVER_TIMESTAMP,
+                "ultima_atualizacao": firestore.SERVER_TIMESTAMP,
+
+                "quantidade": quantidade,
+                "medida": unidade,
+                "unidade": unidade,
+                "valor_unitario": valor_unit,
             }
 
-            # Salva na coleção 'itens'
-            db.collection("itens").add(item_data)
+            print("[DEBUG CADASTRO] Gravando item_data:", item_data)
+            doc_ref.set(item_data)
+            print("[CADASTRO] gravado", doc_ref.id)
 
             flash("Item cadastrado com sucesso!", "success")
             return redirect(url_for("cadastro"))
 
         except Exception as e:
             flash(f"Erro ao cadastrar: {str(e)}", "danger")
-            return redirect(url_for("cadastro"))
+            return render_template("cadastro.html")
 
-    # GET → exibe o formulário
+    # GET → renderiza formulário
     return render_template("cadastro.html")
-
 @app.route('/meus-produtos')
 def meusProdutos():
     return render_template('meus_produtos.html')

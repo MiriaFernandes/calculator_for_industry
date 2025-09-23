@@ -43,7 +43,7 @@
   {% endif %}
 {% endwith %}
 
-<form method="post" class="grid grid-cols-12 gap-5 md:gap-6">
+<form method="post" class="grid grid-cols-12 gap-5 md:gap-6" action="{{ url_for('cadastro') }}">
       <!-- Coluna esquerda -->
       <div class="col-span-12 md:col-span-6">
         <label for="codigo">CÓDIGO</label>
@@ -80,8 +80,12 @@
         <select id="medida" name="medida" class="input">
           <option value="">Selecione...</option>
           <option value="kg">KG</option>
-          <option value="unidade">Unidade</option>
-          <option value="litro">Litro</option>
+          <option value="unidade">UN</option>
+          <option value="litro">LT</option>
+          <option value="rolo">RL</option>
+          <option value="metro">M</option>
+          <option value="peca">PC</option>
+          <option value="jogo">JG</option>
         </select>
 
         <label for="valor_unitario">VALOR UNITÁRIO</label>
