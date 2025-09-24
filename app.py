@@ -225,7 +225,22 @@ def cadastro():
     return render_template("cadastro.html")
 @app.route('/meus-produtos')
 def meusProdutos():
-    return render_template('meus_produtos.html')
+    try:
+        produtos_ref = db.collection('produtos').order_by(
+            'data_criacao', direction=firestore.Query.DESCENDING
+        )
+        produtos = []
+        for doc in produtos_ref.stream():
+            data = doc.to_dict()
+            data['id'] = doc.id
+            produtos.append(data)
+
+        # Renderiza a página passando a lista de produtos
+        return render_template('meus_produtos.html', produtos=produtos)
+
+    except Exception as e:
+        return f"Erro ao carregar produtos: {str(e)}", 500
+
 @app.route('/criar-itens', methods=['POST'])
 def criar_itens():
     """Docstring removida para otimização"""
@@ -439,9 +454,19 @@ def listar_produtos():
 def produtos_alias():
     return listar_produtos()
 
-@app.route("/texte")
-def texte():
-    return render_template("texte.html")
+@app.route('/produtos/<doc_id>', methods=['DELETE'])
+def delete_produto(doc_id):
+    try:
+        ref = db.collection('produtos').document(doc_id)
+        snap = ref.get()
+        if not snap.exists:
+            return jsonify({'success': False, 'error': 'Produto não encontrado'}), 404
+
+        ref.delete()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 @app.route('/itens/<doc_id>', methods=['PATCH', 'DELETE'])
 def itens_update_delete(doc_id):

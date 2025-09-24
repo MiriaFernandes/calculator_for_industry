@@ -42,195 +42,81 @@
   </section>
 
   <!-- Lista de produtos -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-    <div>
-      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
-        <summary class="cursor-pointer list-none p-4">
-          <div class="flex flex-col">
-            <!-- Cabeçalho -->
-            <h2 class="text-center font-semibold text-green-900">MCM588</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+  {% for produto in produtos %}
+  <div>
+    <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
+      <summary class="cursor-pointer list-none p-4">
+        <div class="flex flex-col">
+          <!-- Nome -->
+          <h2 class="text-center font-semibold text-green-900">{{ produto.nome }}</h2>
 
-            <!-- Infos -->
-            <div class="mt-4 space-y-2 text-sm text-gray-600">
-              <div class="flex justify-between">
-                <span class="font-medium">CÓDIGO</span>
-                <span class="text-gray-400">2.72.0028</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">DATA DE CRIAÇÃO</span>
-                <span class="text-gray-400">19/08/2025</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">VALOR</span>
-                <span class="text-green-600 font-semibold">R$ 240,50</span>
-              </div>
+          <!-- Infos principais -->
+          <div class="mt-4 space-y-2 text-sm text-gray-600">
+            <div class="flex justify-between">
+              <span class="font-medium">CÓDIGO</span>
+              <span class="text-gray-400">{{ produto.codigo or '-' }}</span>
             </div>
-
-            <!-- Ações -->
-            <div class="mt-4 flex justify-between items-center">
-              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
-                🗑️
-              </button>
-              <span class="toggle-icon text-xl font-bold">+</span>
+            <div class="flex justify-between">
+              <span class="font-medium">DATA DE CRIAÇÃO</span>
+              <span class="text-gray-400">
+                {{ produto.data_criacao.strftime('%d/%m/%Y') if produto.data_criacao else '-' }}
+              </span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium">VALOR TOTAL</span>
+              <span class="text-green-600 font-semibold">R$ {{ "%.2f"|format(produto.custo_total or 0) }}</span>
             </div>
           </div>
-        </summary>
 
-        <!-- Conteúdo expandido -->
-        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
-          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
-          <div class="flex justify-between">
-            <span>NOME: COBRE</span><span>QTD 0,77</span>
-          </div>
-          <div class="flex justify-between">
-            <span>NOME: CADARCO</span><span>QTD 2</span>
-          </div>
-          <div class="flex justify-between">
-            <span>NOME: FIBRA</span><span>QTD 0,03</span>
-          </div>
-          <div class="flex justify-between">
-            <span>NOME: VERNIZ</span><span>QTD 0,05</span>
-          </div>
-          <div class="flex justify-between">
-            <span>NOME: COLA</span><span>QTD 0,05</span>
-          </div>
-          <div class="flex justify-between">
-            <span>NOME: ESPAGUETE (7MM)</span><span>QTD 0,05</span>
-          </div>
-          <div class="flex justify-between">
-            <span>NOME: TERMINAL</span><span>QTD 1</span>
+          <!-- Ações -->
+          <div class="mt-4 flex justify-between items-center">
+            <button 
+              class="delete-button text-gray-600 hover:text-red-500 transition-colors"
+              data-id="{{ produto.id }}" 
+              data-nome="{{ produto.nome }}">
+              🗑️
+            </button>
+            <span class="toggle-icon text-xl font-bold">+</span>
           </div>
         </div>
-      </details>
+      </summary>
 
-      <!-- Modal de confirmação -->
-      <div class="delete-modal absolute bg-white rounded-2xl p-4 shadow-lg hidden flex-col justify-center z-10 transition-all">
-        <div class="text-center">
-          <h2 class="text-lg font-semibold text-green-900 mb-2">MCM588</h2>
-          <p class="text-gray-600 mb-6">Tem certeza de que deseja excluir este produto permanentemente?</p>
-          
-          <div class="flex justify-center space-x-4">
-            <button class="confirm-yes px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">SIM</button>
-            <button class="confirm-no px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">NÃO</button>
-          </div>
+      <!-- Conteúdo expandido -->
+      <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
+        <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
+        {% for insumo in produto.insumos %}
+        <div class="flex justify-between">
+          <span>NOME: {{ insumo.nome }}</span>
+          <span>QTD {{ insumo.quantidade }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </details>
+
+    <!-- Modal de exclusão -->
+    <div class="delete-modal absolute bg-white rounded-2xl p-4 shadow-lg hidden flex-col justify-center z-10 transition-all">
+      <div class="text-center">
+        <h2 class="text-lg font-semibold text-green-900 mb-2">{{ produto.nome }}</h2>
+        <p class="text-gray-600 mb-6">Tem certeza de que deseja excluir este produto permanentemente?</p>
+        
+        <div class="flex justify-center space-x-4">
+          <button 
+            class="confirm-yes px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            data-id="{{ produto.id }}">
+            SIM
+          </button>
+          <button class="confirm-no px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+            NÃO
+          </button>
         </div>
       </div>
     </div>
-
-    <!-- Replicando os detalhes para outros produtos (copiar esse bloco e editar conforme necessário) -->
-    <!-- Outro produto -->
-    <div>
-      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
-        <summary class="cursor-pointer list-none p-4">
-          <div class="flex flex-col">
-            <h2 class="text-center font-semibold text-green-900">MCM589</h2>
-            <div class="mt-4 space-y-2 text-sm text-gray-600">
-              <div class="flex justify-between">
-                <span class="font-medium">CÓDIGO</span>
-                <span class="text-gray-400">2.72.0029</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">DATA DE CRIAÇÃO</span>
-                <span class="text-gray-400">20/08/2025</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">VALOR</span>
-                <span class="text-green-600 font-semibold">R$ 250,00</span>
-              </div>
-            </div>
-
-            <div class="mt-4 flex justify-between items-center">
-              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
-                🗑️
-              </button>
-              <span class="toggle-icon text-xl font-bold">+</span>
-            </div>
-          </div>
-        </summary>
-        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
-          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
-          <div class="flex justify-between">
-            <span>NOME: ALUMINIO</span><span>QTD 1,00</span>
-          </div>
-        </div>
-      </details>
-    </div>
-
-    <!-- Outro produto -->
-    <div>
-      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
-        <summary class="cursor-pointer list-none p-4">
-          <div class="flex flex-col">
-            <h2 class="text-center font-semibold text-green-900">MCM590</h2>
-            <div class="mt-4 space-y-2 text-sm text-gray-600">
-              <div class="flex justify-between">
-                <span class="font-medium">CÓDIGO</span>
-                <span class="text-gray-400">2.72.0030</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">DATA DE CRIAÇÃO</span>
-                <span class="text-gray-400">21/08/2025</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">VALOR</span>
-                <span class="text-green-600 font-semibold">R$ 260,00</span>
-              </div>
-            </div>
-
-            <div class="mt-4 flex justify-between items-center">
-              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
-                🗑️
-              </button>
-              <span class="toggle-icon text-xl font-bold">+</span>
-            </div>
-          </div>
-        </summary>
-        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
-          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
-          <div class="flex justify-between">
-            <span>NOME: AÇO</span><span>QTD 2,50</span>
-          </div>
-        </div>
-      </details>
-    </div>
-    <div>
-      <details class="w-80 rounded-2xl shadow-md border border-gray-200 bg-white relative product-card">
-        <summary class="cursor-pointer list-none p-4">
-          <div class="flex flex-col">
-            <h2 class="text-center font-semibold text-green-900">MCM590</h2>
-            <div class="mt-4 space-y-2 text-sm text-gray-600">
-              <div class="flex justify-between">
-                <span class="font-medium">CÓDIGO</span>
-                <span class="text-gray-400">2.72.0030</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">DATA DE CRIAÇÃO</span>
-                <span class="text-gray-400">21/08/2025</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-medium">VALOR</span>
-                <span class="text-green-600 font-semibold">R$ 260,00</span>
-              </div>
-            </div>
-
-            <div class="mt-4 flex justify-between items-center">
-              <button class="delete-button text-gray-600 hover:text-red-500 transition-colors">
-                🗑️
-              </button>
-              <span class="toggle-icon text-xl font-bold">+</span>
-            </div>
-          </div>
-        </summary>
-        <div class="border-t border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-1">
-          <h3 class="text-gray-500 font-semibold">MATÉRIA-PRIMA</h3>
-          <div class="flex justify-between">
-            <span>NOME: AÇO</span><span>QTD 2,50</span>
-          </div>
-        </div>
-      </details>
-    </div>
-
   </div>
+  {% endfor %}
+</div>
+
+
 
 </div>
 
@@ -279,16 +165,27 @@
     });
 
     // Ação de exclusão ao clicar em "SIM"
-    confirmYesButtons.forEach(button => {
-      button.addEventListener('click', function () {
-        const modal = this.closest('.delete-modal');
-        if (modal) {
-          alert('Produto excluído com sucesso!');
-          modal.classList.add('hidden');
-          // Aqui você pode adicionar a lógica real para excluir o produto
-        }
-      });
-    });
+  confirmYesButtons.forEach(button => {
+  button.addEventListener('click', async function () {
+    const id = this.dataset.id; // ID do produto vindo do Jinja
+    const modal = this.closest('.delete-modal');
+
+    try {
+      const resp = await fetch(`/produtos/${id}`, { method: 'DELETE' });
+      if (resp.ok) {
+        alert('Produto excluído com sucesso!');
+        modal.closest('div').remove(); // remove o card da tela
+      } else {
+        const errorData = await resp.json();
+        alert('Erro ao excluir: ' + (errorData.error || 'desconhecido'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão ao excluir produto');
+    }
+  });
+});
+
 
     // Fechar modal ao clicar fora dele
     deleteModals.forEach(modal => {
