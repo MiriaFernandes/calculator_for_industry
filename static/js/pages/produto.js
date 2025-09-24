@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const fecharSalvarModalBtn = document.getElementById('close-salvar-modal');
   const modalSalvarProduto = document.getElementById('modal-salvar-produto');
 
-
   // Paginação
   const paginationBar = document.getElementById('paginationBar');
   const prevPageBtn = document.getElementById('prevPage');
@@ -45,6 +44,69 @@ document.addEventListener('DOMContentLoaded', () => {
     return parseFloat(String(v).replace(/\./g, '').replace(',', '.'));
   };
 
+  // ===== NOVAS FUNÇÕES PARA CÁLCULO DE mL =====
+
+  /**
+   * Detecta se o produto é verniz pelo nome
+   */
+  function isVerniz(nomeProduto) {
+    return nomeProduto.toLowerCase().includes('verniz') || nomeProduto.toLowerCase().includes('asa');
+  }
+
+  /**
+   * Extrai litragem do nome do produto (padrão: 18L se não encontrar)
+   */
+  function extrairLitrosDoNome(nomeProduto) {
+    const padroes = [
+      /\b(\d+[,.]?\d*)(?<!-)\bL\b/i,              // "15L", mas não "952-L"
+      /\b(\d+[,.]?\d*)Lt\b/i,                     // "15Lt"
+      /\b(\d+[,.]?\d*)Litros?\b/i                 // "15Litros"
+    ];
+
+    for (let padrao of padroes) {
+      const match = nomeProduto.match(padrao);
+      if (match) {
+        let litros = match[1].replace(',', '.');
+        return parseFloat(litros);
+      }
+    }
+
+    // Fallback: busca qualquer número no nome
+    // const fallback = nomeProduto.match(/(\d+[,.]?\d*)/);
+    // if (fallback) {
+    //   let litros = fallback[1].replace(',', '.');
+    //   return parseFloat(litros);
+    // }
+
+    // Padrão final: se é verniz mas não tem número, usa 18L
+    return isVerniz(nomeProduto) ? 18 : null;
+  }
+
+  /**
+   * Calcula preço por mL para verniz
+   */
+  function calcularPrecoPorML(nomeProduto, valorUnitario) {
+    if (!isVerniz(nomeProduto)) return null;
+
+    const litros = extrairLitrosDoNome(nomeProduto);
+    if (!litros) return null;
+
+    const precoPorML = valorUnitario / (litros * 1000);
+    return {
+      litros,
+      precoPorML,
+      isVerniz: true
+    };
+  }
+
+  /**
+   * Formata informação de mL para exibição
+   */
+  function formatarInfoML(infoML) {
+    if (!infoML) return '';
+    return `(R$ ${infoML.precoPorML.toFixed(4)}/mL - ${infoML.litros}L)`;
+  }
+
   // Toast (top-left)
   function ensureToastContainer() {
     let c = document.querySelector('.nf-toast-container');
@@ -55,25 +117,87 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return c;
   }
-  function showToast({ title, description = '', variant = 'error', timeout = 4000 }) {
-    const cont = ensureToastContainer();
-    const el = document.createElement('div');
-    el.className = `nf-toast ${variant === 'error' ? 'nf-toast--error' : 'nf-toast--success'}`;
-    el.innerHTML = `
-      <div class="nf-toast__row">
-        <div>
-          <div class="nf-toast__title">${title}</div>
-          ${description ? `<div class="nf-toast__desc">${description}</div>` : ''}
-        </div>
-        <button class="nf-toast__close" aria-label="Fechar">&times;</button>
-      </div>`;
-    el.querySelector('.nf-toast__close').addEventListener('click', () => el.remove());
-    cont.appendChild(el);
-    if (timeout > 0) setTimeout(() => el.remove(), timeout);
+
+  // function showToast({ title, description = '', variant = 'error', timeout = 4000 }) {
+  //   const cont = ensureToastContainer();
+  //   const el = document.createElement('div');
+  //   el.className = `nf-toast ${variant === 'error' ? 'nf-toast--error' : 'nf-toast--success'}`;
+  //   el.innerHTML = `
+  //     <div class="nf-toast__row">
+  //       <div>
+  //         <div class="nf-toast__title">${title}</div>
+  //         ${description ? `<div class="nf-toast__desc">${description}</div>` : ''}
+  //       </div>
+  //       <button class="nf-toast__close" aria-label="Fechar">&times;</button>
+  //     </div>`;
+  //   el.querySelector('.nf-toast__close').addEventListener('click', () => el.remove());
+  //   cont.appendChild(el);
+  //   if (timeout > 0) setTimeout(() => el.remove(), timeout);
+  // }
+function showToast({ title, description = '', variant = 'info', duration = 4000 }) {
+  const container = document.getElementById('toast-container');
+  if (!container) {
+    console.error('Toast container não encontrado!');
+    return;
   }
 
+  // Cores baseadas na variante
+  const variantStyles = {
+    success: 'bg-green-500 text-white border-green-600 rounded-[40px]',
+    error: 'bg-red-500 text-white border-red-600 rounded-[40px]',
+    info: 'bg-blue-500 text-white border-blue-600 rounded-[40px] opacity-30',
+    warning: 'bg-yellow-500 text-white border-yellow-600 rounded-[40px]'
+  };
+
+  const style = variantStyles[variant] || variantStyles.info;
+
+  // Criar elemento do toast
+  const toastId = 'toast-' + Date.now();
+  const toast = document.createElement('div');
+  toast.id = toastId;
+  toast.className = `${style} rounded-lg shadow-lg p-4 min-w-[300px] max-w-md border transform transition-all duration-300 ease-in-out translate-x-32 opacity-0`;
+  
+  toast.innerHTML = `
+    <div class="flex items-center justify-between">
+      <div class="flex-1">
+        <div class="font-semibold">${title}</div>
+        ${description ? `<div class="text-sm mt-1 opacity-90">${description}</div>` : ''}
+      </div>
+      <button onclick="removeToast('${toastId}')" class="ml-4 text-white hover:text-gray-200 text-lg font-bold">
+        ×
+      </button>
+    </div>
+  `;
+
+  // Adicionar ao container
+  container.appendChild(toast);
+
+  // Animar entrada (vem da direita)
+  setTimeout(() => {
+    toast.classList.remove('translate-x-32', 'opacity-0');
+    toast.classList.add('translate-x-0', 'opacity-100');
+  }, 10);
+
+  // Auto-remover
+  setTimeout(() => {
+    removeToast(toastId);
+  }, duration);
+}
+
+function removeToast(toastId) {
+  const toast = document.getElementById(toastId);
+  if (toast) {
+    toast.classList.add('translate-x-32', 'opacity-0');
+    setTimeout(() => {
+      if (toast.parentElement) {
+        toast.remove();
+      }
+    }, 300);
+  }
+}
+ 
+
   // Abertura do Modal de Matéria-Prima
-  // Modal matéria-prima
   if (modalMateriaPrima && closeMateriaPrimaBtn) {
     openBtn.addEventListener('click', () => modalMateriaPrima.classList.remove('hidden'));
     closeMateriaPrimaBtn.addEventListener('click', () => modalMateriaPrima.classList.add('hidden'));
@@ -98,28 +222,43 @@ document.addEventListener('DOMContentLoaded', () => {
     lista.forEach(it => {
       const div = document.createElement('div');
       div.className = 'insumo-item';
+
+      // Verifica se é verniz para mostrar info adicional
+      const infoML = calcularPrecoPorML(it.nome, it.valor_unitario);
+      const infoText = infoML ? formatarInfoML(infoML) : '';
+
       div.innerHTML = `
         <div class="insumo-info">
           <p>${it.nome}</p>
           <p>
             ${it.codigo ? `Cód: ${it.codigo} · ` : ''}${it.unidade || ''} · ${fmt(it.valor_unitario)}
+            ${infoText ? `<br><small style="color: #666;">${infoText}</small>` : ''}
           </p>
         </div>
-        <div class="insumo-actions ">
+        <div class="insumo-actions">
           <button data-add="${it.id}" type="button">Adicionar</button>
         </div>
       `;
       div.querySelector('[data-add]').addEventListener('click', () => {
         if (!selecionados.has(it.id)) {
+          const infoML = calcularPrecoPorML(it.nome, it.valor_unitario);
+
           selecionados.set(it.id, {
             id: it.id,
-            codigo: it.codigo, // <-- adicionado
+            codigo: it.codigo,
             nome: it.nome,
             unidade: it.unidade,
             valor_unitario: Number(it.valor_unitario || 0),
-            quantidade: 1
+            quantidade: 1,
+            isVerniz: infoML ? true : false,
+            litros: infoML ? infoML.litros : null,
+            precoPorML: infoML ? infoML.precoPorML : null
+
           });
-          renderSelecionados(); // render quando adiciona/remover
+          renderSelecionados();
+          console.log('isVerniz:', item.isVerniz);
+          console.log('precoPorML:', item.precoPorML);
+          console.log('quantidade:', novaQuantidade);
         }
       });
       itensListEl.appendChild(div);
@@ -140,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Abertura do Modal Salvar Produto
-  // Modal salvar produto
   if (abrirSalvarModalBtn && fecharSalvarModalBtn && modalSalvarProduto) {
     abrirSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.remove('hidden'));
     fecharSalvarModalBtn.addEventListener('click', () => modalSalvarProduto.classList.add('hidden'));
@@ -154,12 +292,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!valor) return 0;
     return parseFloat(valor.toString().replace(",", "."));
   }
+
   function recalcTotal() {
+    // let total = 0;
+    // selecionados.forEach(ins => {
+    //   total += parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
+    // });
+    // totalValorEl.textContent = fmt(total);
+    // return total;
     let total = 0;
     selecionados.forEach(ins => {
-      total += parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
-
-      // total += Number(ins.valor_unitario) * Number(ins.quantidade || 0);
+      const subtotal = ins.isVerniz
+        ? parseNumero(ins.precoPorML) * parseNumero(ins.quantidade)
+        : parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
+      total += subtotal;
     });
     totalValorEl.textContent = fmt(total);
     return total;
@@ -168,46 +314,98 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSelecionados() {
     selecionadosTableBody.innerHTML = '';
     selecionados.forEach(ins => {
-
-      // const subtotal = Number(ins.valor_unitario) * Number(ins.quantidade || 0);
-      const subtotal = parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
+      // const subtotal = parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
+      const subtotal = ins.isVerniz
+        ? parseNumero(ins.precoPorML) * parseNumero(ins.quantidade)
+        : parseNumero(ins.valor_unitario) * parseNumero(ins.quantidade);
+      const isVernizItem = ins.isVerniz;
 
       const tr = document.createElement('tr');
       tr.setAttribute('data-id', ins.id);
       tr.setAttribute('data-vu', String(ins.valor_unitario));
-      tr.innerHTML = `
-      <td colspan="6" class="card-line">
-        <div class="card">
-          <div class="card-content">
-            
-            <p>Código</p>
-            <p>Nome</p>
-            <p>Unidade</p>
-            <p>Valor unitário</p>
-            <p>Quantidade</p>
-            <p>Subtotal</p>
-            <p>${ins.codigo}</p>
-            <p >${ins.nome}</p>
-            <p>${ins.unidade || ''}</p>
-            <p> ${fmt(ins.valor_unitario)}</p>
-            <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
-                  value="${ins.quantidade ?? 1}" data-id="${ins.id}"
-                  class="quantidade-input">
-           
-            <p data-subtotal>${fmt(subtotal)}</p>
-           
+
+      // HTML diferente para verniz (com input de mL)
+      if (isVernizItem) {
+        tr.innerHTML = `
+        <td colspan="6" class="card-line">
+          <div class="card">
+            <div class="card-content">
+              <p>Código</p>
+              <p>Nome</p>
+              <p>Unidade</p>
+              <p>Valor unitário</p>
+              <p>Quantidade (mL)</p>
+              <p>Subtotal</p>
+              <p>${ins.codigo}</p>
+              <p>${ins.nome}</p>
+              <p>${ins.unidade || ''}</p>
+              <p>${fmt(ins.valor_unitario)}<br><small>${ins.litros}L • R$ ${ins.precoPorML.toFixed(4)}/mL</small></p>
+              <input type="number" inputmode="decimal" lang="pt-BR" step="1" min="0"
+                    value="${ins.quantidade ?? 100}" data-id="${ins.id}"
+                    class="quantidade-input" placeholder="mL">
+              <p data-subtotal>${fmt(subtotal)}</p>
+            </div>
           </div>
-        </div>
-        <button class="btn btn-primary " data-rm="${ins.id}" type="button"><img src="../static/image/icon-close-calc.svg" alt=""></button>
-      </td>
-      
-    `;
+          <button class="btn btn-primary" data-rm="${ins.id}" type="button">
+            <img src="../static/image/icon-close-calc.svg" alt="">
+          </button>
+        </td>
+        `;
+      } else {
+        // HTML normal para outros produtos
+        tr.innerHTML = `
+        <td colspan="6" class="card-line">
+          <div class="card">
+            <div class="card-content">
+              <p>Código</p>
+              <p>Nome</p>
+              <p>Unidade</p>
+              <p>Valor unitário</p>
+              <p>Quantidade</p>
+              <p>Subtotal</p>
+              <p>${ins.codigo}</p>
+              <p>${ins.nome}</p>
+              <p>${ins.unidade || ''}</p>
+              <p>${fmt(ins.valor_unitario)}</p>
+              <input type="number" inputmode="decimal" lang="pt-BR" step="0.0001" min="0"
+                    value="${ins.quantidade ?? 1}" data-id="${ins.id}"
+                    class="quantidade-input">
+              <p data-subtotal>${fmt(subtotal)}</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" data-rm="${ins.id}" type="button">
+            <img src="../static/image/icon-close-calc.svg" alt="">
+          </button>
+        </td>
+        `;
+      }
+
       selecionadosTableBody.appendChild(tr);
+      const input = tr.querySelector('.quantidade-input');
+      const subtotalEl = tr.querySelector('[data-subtotal]');
+
+      input.addEventListener('input', (e) => {
+        const id = e.target.dataset.id;
+        const novaQuantidade = parseFloat(e.target.value.replace(",", ".")) || 0;
+
+        if (selecionados.has(id)) {
+          const item = selecionados.get(id);
+          item.quantidade = novaQuantidade;
+
+          // Recalcula subtotal corretamente
+          const novoSubtotal = item.isVerniz
+            ? item.precoPorML * novaQuantidade
+            : parseNumero(item.valor_unitario) * novaQuantidade;
+
+          // Atualiza subtotal na interface
+          if (subtotalEl) subtotalEl.textContent = fmt(novoSubtotal);
+
+          // Atualiza total geral
+          recalcTotal();
+        }
+      });
     });
-    recalcTotal();
   }
-
-
 
   // ===== Delegação na tabela selecionados =====
   selecionadosTableBody.addEventListener('input', e => {
@@ -215,24 +413,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!input) return;
     const id = input.getAttribute('data-id');
     const row = input.closest('tr');
-    // const vUnit = Number(row.getAttribute('data-vu'));
-    const qtd = toFloat(input.value);
-    // const q = isNaN(qtd) ? 0 : qtd;
-    // Pega valores sempre com parseNumero
     const vUnit = parseNumero(row.getAttribute('data-vu'));
     const q = parseNumero(input.value);
 
-    // if (selecionados.has(id)) selecionados.get(id).quantidade = q;
-    if (selecionados.has(id)) selecionados.get(id).quantidade = q;
+    if (selecionados.has(id)) {
+      selecionados.get(id).quantidade = q;
+    }
 
-
-    // row.querySelector('[data-subtotal]').textContent = fmt(vUnit * q);
-    // row.querySelector('[data-subtotal]').textContent = fmt(
-    //   parseNumero(vUnit) * parseNumero(q)
-    // );
-    // recalcTotal();
-    row.querySelector('[data-subtotal]').textContent = fmt(vUnit * q);
-recalcTotal();
+    row.querySelector('[data-subtotal]').textContent =fmt(novoSubtotal);
+    recalcTotal();
   });
 
   selecionadosTableBody.addEventListener('click', e => {
@@ -272,7 +461,7 @@ recalcTotal();
     try {
       const url = new URL('/listar-itens', window.location.origin);
       url.searchParams.set('q', q);
-      url.searchParams.set('limit', PER_PAGE * 3); // mostra mais itens na busca
+      url.searchParams.set('limit', PER_PAGE * 3);
 
       const resp = await fetch(url);
       const data = await resp.json();
@@ -294,7 +483,6 @@ recalcTotal();
     const term = v.trim();
     if (term) {
       isSearchMode = true;
-      // reseta paginação visual
       pageNum = 1;
       pageCursor = null;
       nextCursor = null;
@@ -302,7 +490,6 @@ recalcTotal();
       carregarItensBusca(term);
     } else {
       isSearchMode = false;
-      // volta para página 1
       pageNum = 1;
       pageCursor = null;
       nextCursor = null;
@@ -322,7 +509,6 @@ recalcTotal();
   if (prevPageBtn) {
     prevPageBtn.addEventListener('click', () => {
       if (isSearchMode || cursorStack.length === 0) return;
-      // voltar: usar o cursor da página anterior
       pageCursor = cursorStack.pop() || null;
       pageNum = Math.max(1, pageNum - 1);
       carregarItensPaged(pageCursor);
@@ -332,8 +518,7 @@ recalcTotal();
   if (nextPageBtn) {
     nextPageBtn.addEventListener('click', () => {
       if (isSearchMode || !nextCursor) return;
-      // ir para próxima: empilha o cursor atual
-      cursorStack.push(pageCursor); // cursor que gerou a página atual
+      cursorStack.push(pageCursor);
       pageCursor = nextCursor;
       pageNum += 1;
       carregarItensPaged(pageCursor);
@@ -341,7 +526,7 @@ recalcTotal();
   }
 
   // ===== Salvar Produto =====
-  btnSalvarProduto.addEventListener('click', async () => {
+ btnSalvarProduto.addEventListener('click', async () => {
     const nomeProduto = (nomeProdutoEl.value || '').trim();
     if (!nomeProduto) { showToast({ title: 'Informe o nome do produto.' }); return; }
     if (selecionados.size === 0) { showToast({ title: 'Selecione ao menos um item.' }); return; }
