@@ -534,14 +534,16 @@ function removeToast(toastId) {
     const insumos = [];
     selecionados.forEach(ins => {
       const quantidade = Number(ins.quantidade || 0);
-      const valor_unitario = Number(ins.valor_unitario || 0);
+      const preco = ins.isVerniz ? ins.precoPorML: Number(ins.valor_unitario || 0);
+      const valor_unitario = preco;
+      const subtotal = preco * quantidade;
       insumos.push({
         id_item: ins.id,
         nome: ins.nome,
         unidade: ins.unidade,
         valor_unitario,
         quantidade,
-        subtotal: quantidade * valor_unitario
+        subtotal
       });
     });
 
