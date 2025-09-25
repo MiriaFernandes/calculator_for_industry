@@ -505,6 +505,68 @@ def itens_update_delete(doc_id):
 def cadastro_manual():
     return render_template('cadastro_manual.html')
 
+# rota atualizar quatidade produto
+@app.route('/produtos/<string:produto_id>/insumos/<string:insumo_id>', methods=['PUT'])
+def atualizar_insumo(produto_id, insumo_id):
+    try:
+        data = request.get_json()
+        nova_quantidade = data.get('quantidade')
+
+        produto_ref = db.collection('produtos').document(produto_id)
+        produto_doc = produto_ref.get()
+
+        if not produto_doc.exists:
+            return jsonify({'error': 'Produto não encontrado'}), 404
+
+        produto_data = produto_doc.to_dict()
+        insumos = produto_data.get('insumos', [])
+        historico = produto_data.get('historico_valores', [])
+
+        valor_total_anterior = produto_data.get('custo_total', 0)
+
+        insumo_encontrado = False
+        for insumo in insumos:
+            if insumo.get('id_item') == insumo_id:
+                insumo['quantidade'] = nova_quantidade
+                insumo['subtotal'] = float(nova_quantidade) * float(insumo.get('valor_unitario', 0))
+                insumo_encontrado = True
+                break
+
+        if not insumo_encontrado:
+            return jsonify({'error': 'Insumo não encontrado'}), 404
+
+        novo_custo_total = sum(insumo['subtotal'] for insumo in insumos)
+
+        historico.append({
+            'valor_antigo': valor_total_anterior,
+            'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+        })
+
+        produto_ref.update({
+            'insumos': insumos,
+            'custo_total': novo_custo_total,
+            'historico_valores': historico
+        })
+
+        return jsonify({
+            'message': 'Quantidade atualizada com sucesso',
+            'nova_quantidade': nova_quantidade,
+            'custo_total_atualizado': novo_custo_total
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': f'Erro interno: {str(e)}'}), 500
+
+# rota para ver histórico
+@app.route('/produtos/<string:produto_id>', methods=['GET'])
+def buscar_produto(produto_id):
+    produto_ref = db.collection('produtos').document(produto_id)
+    produto_doc = produto_ref.get()
+
+    if not produto_doc.exists:
+        return jsonify({'error': 'Produto não encontrado'}), 404
+
+    return jsonify(produto_doc.to_dict()), 200
 @app.route('/itens', methods=['GET'])
 def listar_itens_view():
     """Docstring removida para otimização"""
