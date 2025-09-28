@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
         // Insere categoria como última coluna
         tds.push(categoriaCell);
+        console.log(dados);
       }
 
       tr.innerHTML = tds.join('');
@@ -389,6 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
           quantidade: it.quantidade,
           valor_unitario: it.valor_unitario,
           data_emissao: it.data_emissao ?? '',
+            fornecedor: it.fornecedor ?? '', // 👈 ADICIONADO
           categoria: (categoriaInputs[idx] && categoriaInputs[idx].value) ? categoriaInputs[idx].value : null
         }));
       } else {
@@ -398,7 +400,8 @@ document.addEventListener('DOMContentLoaded', function () {
           unidade: it.unidade,
           quantidade: it.quantidade,
           valor_unitario: it.valor_unitario,
-          data_emissao: it.data_emissao ?? ''
+          data_emissao: it.data_emissao ?? '',
+          fornecedor: it.fornecedor ?? '', // 👈 ADICIONADO
         }));
       }
 

@@ -252,7 +252,9 @@ function removeToast(toastId) {
             quantidade: 1,
             isVerniz: infoML ? true : false,
             litros: infoML ? infoML.litros : null,
-            precoPorML: infoML ? infoML.precoPorML : null
+            precoPorML: infoML ? infoML.precoPorML : null,
+            fornecedor: it.fornecedor ?? ''
+            
 
           });
           renderSelecionados();
@@ -543,15 +545,17 @@ function removeToast(toastId) {
         unidade: ins.unidade,
         valor_unitario,
         quantidade,
-        subtotal
+        subtotal,
+        fornecedor: ins.fornecedor ?? '' // 👈 ADICIONADO
       });
     });
 
     btnSalvarProduto.disabled = true;
     const originalText = btnSalvarProduto.textContent;
-    btnSalvarProduto.textContent = 'Salvando...';
+    btnSalvarProduto.textContent = 'SALVANDO...';
 
     try {
+      console.log('Insumos enviados:', insumos);
       const resp = await fetch('/criar-produto', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

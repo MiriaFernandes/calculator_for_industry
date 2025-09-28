@@ -141,6 +141,32 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        // document.addEventListener('click', async function (e) {
+        //     if (e.target.classList.contains('ver-historico-btn')) {
+        //         const produtoId = e.target.dataset.produtoId;
+        //         try {
+        //             const response = await fetch(`http://127.0.0.1:5000/produtos/${produtoId}`);
+        //             const data = await response.json();
+        //             const historico = data.historico_valores || [];
+
+        //             if (historico.length === 0) {
+        //                 alert('Nenhum histórico disponível.');
+        //                 return;
+        //             }
+
+        //             let mensagem = 'Histórico de valores:\n\n';
+        //             historico.forEach(item => {
+        //                 mensagem += `Valor do produto anetiromente: R$ ${item.valor_antigo.toFixed(2)} - Data: ${item.data}\n`;
+        //             });
+
+        //             alert(mensagem);
+        //         } catch (err) {
+        //             console.error(err);
+        //             alert('Erro ao buscar histórico');
+        //         }
+        //     }
+        // });
+
         document.addEventListener('click', async function (e) {
             if (e.target.classList.contains('ver-historico-btn')) {
                 const produtoId = e.target.dataset.produtoId;
@@ -149,24 +175,41 @@ document.addEventListener('DOMContentLoaded', function () {
                     const data = await response.json();
                     const historico = data.historico_valores || [];
 
+                    const modal = document.getElementById('modal-historico');
+                    const modalTexto = document.getElementById('modal-texto');
+                    const closeBtn = modal.querySelector('.close');
+
                     if (historico.length === 0) {
-                        alert('Nenhum histórico disponível.');
-                        return;
+                        modalTexto.textContent = 'Nenhum histórico disponível.';
+                    } else {
+                        let mensagem = '';
+                        historico.forEach(item => {
+                            // mensagem += `Valor do produto anteriormente: R$ ${item.valor_antigo.toFixed(2)} - Data: ${item.data}\n`;
+mensagem += `Insumo: ${item.insumo} | Valor anterior: R$ ${item.valor_antigo.toFixed(2)} | Quantidade anterior: ${item.quantidade_antiga} | Fornecedor: ${item.fornecedor || '—'} | Data: ${item.data}\n`;                        });
+                        modalTexto.textContent = mensagem;
                     }
 
-                    let mensagem = 'Histórico de valores:\n\n';
-                    historico.forEach(item => {
-                        mensagem += `Valor do produto anetiromente: R$ ${item.valor_antigo.toFixed(2)} - Data: ${item.data}\n`;
-                    });
+                    modal.style.display = 'block';
 
-                    alert(mensagem);
+                    closeBtn.onclick = function () {
+                        modal.style.display = 'none';
+                    }
+
+                    window.onclick = function (event) {
+                        if (event.target == modal) {
+                            modal.style.display = 'none';
+                        }
+                    }
+
                 } catch (err) {
                     console.error(err);
                     alert('Erro ao buscar histórico');
                 }
             }
         });
+
     }
+
 
     // 4. Funções auxiliares para edição
     function toggleEditMode(produtoId) {

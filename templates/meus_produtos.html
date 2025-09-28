@@ -2,6 +2,11 @@
 
 {% block title %}Produtos{% endblock %}
 
+{% block styles %}
+{{ super() }} {# Garante que os estilos do base.html também sejam incluídos #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/meus_produtos.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="relative w-screen mx-[calc(50%-50vw)] overflow-x-clip">
 
@@ -52,10 +57,10 @@
 
             <!-- Infos principais -->
             <div class="mt-4 space-y-2 text-sm text-gray-600">
-              <div class="flex justify-between">
+              <!-- <div class="flex justify-between">
                 <span class="font-medium">CÓDIGO</span>
                 <span class="text-gray-400">{{ produto.codigo or '-' }}</span>
-              </div>
+              </div> -->
               <div class="flex justify-between">
                 <span class="font-medium">DATA DE CRIAÇÃO</span>
                 <span class="text-gray-400">
@@ -101,7 +106,10 @@
 
           {% for insumo in produto.insumos %}
           <div class="flex justify-between items-center insumo-item" data-insumo-id="{{ insumo.id }}">
-            <span>NOME: {{ insumo.nome }}</span>
+            <div>
+              <span>NOME: {{ insumo.nome }}</span><br>
+              <span class="text-gray-500">FORNECEDOR: {{ insumo.fornecedor or '—' }}</span>
+            </div>
             <div class="insumo-item" data-insumo-id="{{ insumo.id_item }}" class="flex items-center space-x-2">
               <!-- Modo visualização -->
               <span class="insumo-quantidade">QTD {{ insumo.quantidade }}</span>
@@ -119,6 +127,7 @@
               </button>
             </div>
           </div>
+
           {% endfor %}
         </div>
       </details>
@@ -144,6 +153,15 @@
       </div>
     </div>
     {% endfor %}
+
+    <!-- Modal his´torioc  -->
+    <div id="modal-historico" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Histórico de Valores</h2>
+        <pre id="modal-texto"></pre>
+      </div>
+    </div>
   </div>
 
 
@@ -154,72 +172,8 @@
 {% endblock %}
 
 {% block scripts %}
+
 <script type="module" src="{{ url_for('static', filename='js/pages/meus_produtos.js') }}"></script>
-<style>
-  details>summary {
-    list-style: none;
-  }
 
-  details>summary::-webkit-details-marker {
-    display: none;
-  }
 
-  .delete-modal {
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  /* Desativar o comportamento padrão do details */
-  .product-card details summary {
-    cursor: pointer;
-  }
-
-  .product-card details summary::-webkit-details-marker {
-    display: none;
-  }
-
-  /* Garantir que apenas o ícone controle a abertura */
-  .product-card details>summary {
-    list-style: none;
-  }
-
-  .product-card details>summary::before {
-    display: none;
-  }
-
-  /* Estilo para a transição suave */
-  .product-card details .border-t {
-    transition: all 0.3s ease;
-  }
-
-  /* Estilo para o modo edição */
-  .editing-mode {
-    background-color: #f9fafb;
-  }
-
-  .insumo-input:focus {
-    outline: none;
-    /*ring: 2px;
-    ring-color: #3b82f6;*/
-    border-color: #3b82f6;
-  }
-
-  /* Transição suave */
-  .insumo-item {
-    transition: background-color 0.2s ease;
-  }
-
-  .editing-mode .insumo-item:hover {
-    background-color: #f3f4f6;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-</style>
 {% endblock %}

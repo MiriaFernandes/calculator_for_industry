@@ -67,8 +67,12 @@ def extrair_dados_xml(xml_file):
             return {'error': 'Arquivo XML não é uma NFe válida (NFe não encontrada)'}
 
         infNFe = nfe_root.find('nfe:infNFe', NS)
+        emit = infNFe.find('nfe:emit', NS)
+        nome_fornecedor = ''
         if infNFe is None:
             return {'error': 'Estrutura XML inválida - tag infNFe não encontrada'}
+        if emit is not None:
+            nome_fornecedor = emit.findtext('nfe:xNome', default='', namespaces=NS)
 
         # NOVO: pegar a data de emissão no cabeçalho da NF
         ide = infNFe.find('nfe:ide', NS)
@@ -105,6 +109,7 @@ def extrair_dados_xml(xml_file):
                 'quantidade':quantidade,
                 'valor_unitario': valor_unitario,
                 'data_emissao': data_emissao or None, # NOVO (replicado em cada item)
+                'fornecedor': nome_fornecedor or None,  # 👈 NOVO CAMPO
                 'timestamp': datetime.now().isoformat()
             })
         return lista_dados
@@ -241,9 +246,102 @@ def meusProdutos():
     except Exception as e:
         return f"Erro ao carregar produtos: {str(e)}", 500
 
+# @app.route('/criar-itens', methods=['POST'])
+# def criar_itens():
+#     """Docstring removida para otimização"""
+#     try:
+#         body = request.get_json(silent=True) or {}
+#         itens = body.get('itens')
+#         if not isinstance(itens, list) or not itens:
+#             return jsonify({'error': 'Envie um array "itens" com pelo menos um item'}), 400
+
+#         def to_float(x):
+#             try:
+#                 return float(str(x).replace(',', '.'))
+#             except Exception:
+#                 return None
+
+#         # 1) normaliza e valida
+#         clean = []
+#         for idx, it in enumerate(itens):
+#             if not isinstance(it, dict):
+#                 return jsonify({'error': f'Item na posição {idx} inválido'}), 400
+
+#             nome = (it.get('nome') or '').strip()
+#             unidade = (it.get('unidade') or '').strip()
+#             valor_unitario = to_float(it.get('valor_unitario'))
+#             data_emissao = (it.get('data_emissao') or '').strip()
+#             fornecedor = (it.get('fornecedor') or '').strip()
+#             codigo = it.get('codigo')
+#             codigo = (codigo if codigo not in ('', None) else None)
+
+#             if not nome or not unidade or valor_unitario is None or not data_emissao:
+#                 return jsonify({'error': f'Campos obrigatórios ausentes no item {idx+1}'}), 400
+
+#             clean.append({
+#                 'idx': idx,
+#                 'codigo': codigo,
+#                 'nome': nome,
+#                 'unidade': unidade,
+#                 'valor_unitario': valor_unitario,
+#                 'data_emissao': data_emissao
+#             })
+
+#         # 2) checa duplicatas no Firestore
+#         conflicts = []
+#         col = db.collection('itens')
+#         for c in clean:
+#             q = (col.where('nome', '==', c['nome'])
+#                     .where('unidade', '==', c['unidade'])
+#                     .where('valor_unitario', '==', c['valor_unitario'])
+#                     .where('data_emissao', '==', c['data_emissao']))
+#             if c['codigo'] is not None:
+#                 q = q.where('codigo', '==', c['codigo'])
+
+#             # OBS: isso pode exigir criar um índice composto no Firestore
+#             # Se aparecer um erro de índice, siga o link que o console/log do Firestore sugerir.
+#             exists = next(q.limit(1).stream(), None)
+#             if exists is not None:
+#                 conflicts.append({
+#                     'index': c['idx'],
+#                     'item': {
+#                         'codigo': c['codigo'],
+#                         'nome': c['nome'],
+#                         'unidade': c['unidade'],
+#                         'valor_unitario': c['valor_unitario'],
+#                         'data_emissao': c['data_emissao']
+#                     }
+#                 })
+
+#         if conflicts:
+#             return jsonify({'success': False, 'conflicts': conflicts}), 409
+
+#         # 3) grava em batch (atômico)
+#         batch = db.batch()
+#         now_fields = {
+#             'data_criacao': firestore.SERVER_TIMESTAMP,
+#             'ultima_atualizacao': firestore.SERVER_TIMESTAMP
+#         }
+#         for c in clean:
+#             doc = {
+#                 'codigo': c['codigo'],
+#                 'nome': c['nome'],
+#                 'unidade': c['unidade'],
+#                 'valor_unitario': c['valor_unitario'],
+#                 'data_emissao': c['data_emissao'],
+#                 **now_fields
+#             }
+#             ref = col.document()
+#             batch.set(ref, doc)
+
+#         batch.commit()
+#         return jsonify({'success': True, 'created': len(clean)}), 201
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+
 @app.route('/criar-itens', methods=['POST'])
 def criar_itens():
-    """Docstring removida para otimização"""
     try:
         body = request.get_json(silent=True) or {}
         itens = body.get('itens')
@@ -256,7 +354,6 @@ def criar_itens():
             except Exception:
                 return None
 
-        # 1) normaliza e valida
         clean = []
         for idx, it in enumerate(itens):
             if not isinstance(it, dict):
@@ -266,10 +363,11 @@ def criar_itens():
             unidade = (it.get('unidade') or '').strip()
             valor_unitario = to_float(it.get('valor_unitario'))
             data_emissao = (it.get('data_emissao') or '').strip()
+            fornecedor = (it.get('fornecedor') or '').strip()
             codigo = it.get('codigo')
             codigo = (codigo if codigo not in ('', None) else None)
 
-            if not nome or not unidade or valor_unitario is None or not data_emissao:
+            if not nome or not unidade or valor_unitario is None or not data_emissao or not fornecedor:
                 return jsonify({'error': f'Campos obrigatórios ausentes no item {idx+1}'}), 400
 
             clean.append({
@@ -278,22 +376,20 @@ def criar_itens():
                 'nome': nome,
                 'unidade': unidade,
                 'valor_unitario': valor_unitario,
-                'data_emissao': data_emissao
+                'data_emissao': data_emissao,
+                'fornecedor': fornecedor
             })
 
-        # 2) checa duplicatas no Firestore
         conflicts = []
         col = db.collection('itens')
         for c in clean:
             q = (col.where('nome', '==', c['nome'])
                     .where('unidade', '==', c['unidade'])
                     .where('valor_unitario', '==', c['valor_unitario'])
-                    .where('data_emissao', '==', c['data_emissao']))
+                    .where('data_emissao', '==', c['data_emissao'])
+                    .where('fornecedor', '==', c['fornecedor']))
             if c['codigo'] is not None:
                 q = q.where('codigo', '==', c['codigo'])
-
-            # OBS: isso pode exigir criar um índice composto no Firestore
-            # Se aparecer um erro de índice, siga o link que o console/log do Firestore sugerir.
             exists = next(q.limit(1).stream(), None)
             if exists is not None:
                 conflicts.append({
@@ -303,19 +399,20 @@ def criar_itens():
                         'nome': c['nome'],
                         'unidade': c['unidade'],
                         'valor_unitario': c['valor_unitario'],
-                        'data_emissao': c['data_emissao']
+                        'data_emissao': c['data_emissao'],
+                        'fornecedor': c['fornecedor']
                     }
                 })
 
         if conflicts:
             return jsonify({'success': False, 'conflicts': conflicts}), 409
 
-        # 3) grava em batch (atômico)
         batch = db.batch()
         now_fields = {
             'data_criacao': firestore.SERVER_TIMESTAMP,
             'ultima_atualizacao': firestore.SERVER_TIMESTAMP
         }
+
         for c in clean:
             doc = {
                 'codigo': c['codigo'],
@@ -323,6 +420,7 @@ def criar_itens():
                 'unidade': c['unidade'],
                 'valor_unitario': c['valor_unitario'],
                 'data_emissao': c['data_emissao'],
+                'fornecedor': c['fornecedor'],
                 **now_fields
             }
             ref = col.document()
@@ -333,6 +431,7 @@ def criar_itens():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/')
 def index():
@@ -420,6 +519,7 @@ def criar_produto():
                 'valor_unitario': v_unit,
                 'quantidade': qtd,
                 'subtotal': subtotal,
+                'fornecedor': it.get('fornecedor')  # 👈 NOVO CAMPO
             })
 
         # 3) Grava
@@ -430,7 +530,8 @@ def criar_produto():
             'insumos': clean_insumos,
             'custo_total': total,
             'data_criacao': firestore.SERVER_TIMESTAMP,
-            'ultima_atualizacao': firestore.SERVER_TIMESTAMP
+            'ultima_atualizacao': firestore.SERVER_TIMESTAMP,
+            'fornecedor': it.get('fornecedor')  # 👈 NOVO CAMPO
         }
         produto_ref.set(produto_data)
 
@@ -525,13 +626,16 @@ def atualizar_insumo(produto_id, insumo_id):
         valor_total_anterior = produto_data.get('custo_total', 0)
 
         insumo_encontrado = False
+        nome_insumo_alterado = None
         for insumo in insumos:
             if insumo.get('id_item') == insumo_id:
+                quantidade_antiga = insumo.get('quantidade', 0)
+                fornecedor = insumo.get('fornecedor', '')  # 👈 NOVO
                 insumo['quantidade'] = nova_quantidade
                 insumo['subtotal'] = float(nova_quantidade) * float(insumo.get('valor_unitario', 0))
+                nome_insumo_alterado = insumo.get('nome')
                 insumo_encontrado = True
                 break
-
         if not insumo_encontrado:
             return jsonify({'error': 'Insumo não encontrado'}), 404
 
@@ -539,7 +643,10 @@ def atualizar_insumo(produto_id, insumo_id):
 
         historico.append({
             'valor_antigo': valor_total_anterior,
-            'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            'quantidade_antiga': quantidade_antiga,  # 👈 NOVO CAMPO
+            'fornecedor': fornecedor,  # 👈 NOVO
+            'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
+            'insumo': nome_insumo_alterado
         })
 
         produto_ref.update({
