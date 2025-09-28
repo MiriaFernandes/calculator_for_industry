@@ -664,6 +664,29 @@ def atualizar_insumo(produto_id, insumo_id):
     except Exception as e:
         return jsonify({'error': f'Erro interno: {str(e)}'}), 500
 
+@app.route('/materiais', methods = ['GET'])
+def listar_materiais():
+    try:
+        itens_ref = db.collection('itens')
+        docs = list(itens_ref.stream())  # 👈 transforma em lista para garantir que pode ser iterado
+
+        itens = []
+        for doc in docs:
+            item = doc.to_dict() if doc.exists else {}
+            itens.append({
+                'id': doc.id,
+                'nome': item.get('nome', ''),
+                'fornecedor': item.get('fornecedor', ''),
+                'unidade': item.get('unidade', ''),
+                'valor_unitario': float(item.get('valor_unitario') or 0.0),
+                'data_emissao': item.get('data_emissao', '')
+            })
+
+        return render_template('listar_materia_prima.html', itens=itens)
+
+    except Exception as e:
+        erro_msg = f'Erro ao buscar itens: {str(e)}'
+        return render_template('erro.html', mensagem=erro_msg), 500
 # rota para ver histórico
 @app.route('/produtos/<string:produto_id>', methods=['GET'])
 def buscar_produto(produto_id):
@@ -675,6 +698,7 @@ def buscar_produto(produto_id):
 
     return jsonify(produto_doc.to_dict()), 200
 @app.route('/itens', methods=['GET'])
+
 def listar_itens_view():
     """Docstring removida para otimização"""
     return render_template('listar_itens.html')

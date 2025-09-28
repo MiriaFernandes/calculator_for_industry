@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Registro de Matérias-Primas{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/materiais.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="w-full pt-20 px-4 sm:px-6 lg:px-12">
+  <!-- Banner -->
+  <section class=" flex rounded-[25px] bg-gradient-to-r from-red-700 via-red-600 to-neutral-900 rounded-xl shadow p-6 mb-8 text-white text-center">
+    <img src="/static/image/illustration-mp.svg" alt="Banner" class="mx-auto h-32 sm:h-40 mt-4">
+    <h2 class="text-2xl sm:text-3xl font-semibold mb-2">CONSULTE O REGISTRO DE MATÉRIAS-PRIMAS E FORNECEDORES</h2>
+  </section>
+
+  <!-- Filtro e Pesquisa -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+    <div class="flex items-center space-x-4">
+      <label class="flex items-center space-x-2">
+        <input type="radio" name="filtro" value="materia" checked class="filtro-radio">
+        <span>Matéria-prima</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <input type="radio" name="filtro" value="fornecedor" class="filtro-radio">
+        <span>Fornecedor</span>
+      </label>
+    </div>
+    <input type="text" id="barra-pesquisa" placeholder="Insira sua pesquisa"
+      class="w-full sm:w-96 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+  </div>
+
+  <!-- Tabela -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+      <thead class="bg-gray-100 text-gray-700">
+        <tr>
+          <th class="px-4 py-2 text-left">Data Emissão</th>
+          <th class="px-4 py-2 text-left">Matéria-Prima</th>
+          <th class="px-4 py-2 text-left">Fornecedor</th>
+          <th class="px-4 py-2 text-left">Unidade</th>
+          <th class="px-4 py-2 text-left">Valor Unitário</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-itens">
+  {% for item in itens %}
+  <tr class="border-t">
+    <td class="px-4 py-2">{{ item.data_emissao }}</td>
+    <td class="px-4 py-2">{{ item.nome }}</td>
+    <td class="px-4 py-2">{{ item.fornecedor }}</td>
+    <td class="px-4 py-2">{{ item.unidade }}</td>
+    <td class="px-4 py-2">R$ {{ "%.2f"|format(item.valor_unitario) }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/pages/listar_materia_prima.js') }}"></script>
+{% endblock %}
