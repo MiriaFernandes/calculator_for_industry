@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const formData = new FormData();
       formData.append('xmlFile', xmlFileInput.files[0]);
 
-      fetch('/upload-xml', { method: 'POST', body: formData })
+      fetch('/upload-arquivo', { method: 'POST', body: formData })
         .then(r => r.json())
         .then(data => {
           hide(loadingIndicator);
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
           quantidade: it.quantidade,
           valor_unitario: it.valor_unitario,
           data_emissao: it.data_emissao ?? '',
-            fornecedor: it.fornecedor ?? '', // 👈 ADICIONADO
+          fornecedor: it.fornecedor ?? '', // 👈 ADICIONADO
           categoria: (categoriaInputs[idx] && categoriaInputs[idx].value) ? categoriaInputs[idx].value : null
         }));
       } else {

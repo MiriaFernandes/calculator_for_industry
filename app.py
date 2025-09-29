@@ -9,6 +9,9 @@ from google.cloud.firestore_v1 import FieldFilter  # opcional, não usamos embai
 from dotenv import load_dotenv  # <- NOVO IMPORT
 from decimal import Decimal
 import re
+from pdf_processor import extrair_dados_pdf  # <- NOVO IMPORT
+import random
+import string
 # Carrega variáveis do .envcd
 load_dotenv()
 app = Flask(__name__)
@@ -71,6 +74,25 @@ def _find_text_anywhere(element, local_name):
         if elem.tag.split('}')[-1] == local_name and elem.text:
             return elem.text
     return ''
+
+def gerar_codigo_numerico():
+    """
+    Gera um código numérico randômico de 6 dígitos
+    Exemplo: 123456, 789012, etc.
+    """
+    return ''.join(random.choices(string.digits, k=6))
+
+def gerar_codigo_unico(existing_codes):
+    """
+    Gera um código único numérico que não existe na base
+    """
+    max_tentativas = 100  # Evita loop infinito
+    for _ in range(max_tentativas):
+        codigo = gerar_codigo_numerico()
+        if codigo not in existing_codes:
+            return codigo
+    # Se não conseguir em 100 tentativas, usa timestamp
+    return f"{int(datetime.now().timestamp()) % 1000000:06d}"
 
 def extrair_identificadores_nfe(xml_file):
     """Retorna (cnpj, numero_nota) extraídos do XML."""
@@ -149,6 +171,17 @@ def extrair_dados_xml(xml_file):
                 or ide.findtext('nfe:dEmi', default='', namespaces=NS)  # fallback p/ layouts mais antigos
             )
 
+        # Buscar códigos existentes na base ANTES de processar os itens
+        existing_codes = set()
+        try:
+            docs = db.collection('itens').select(['codigo']).stream()
+            for doc in docs:
+                data = doc.to_dict()
+                if data.get('codigo'):
+                    existing_codes.add(str(data['codigo']))
+        except Exception as e:
+            print(f"AVISO: Não foi possível buscar códigos existentes: {e}")
+
         lista_dados = []
         for det in infNFe.findall('nfe:det', NS):
             prod = det.find('nfe:prod', NS)
@@ -168,14 +201,25 @@ def extrair_dados_xml(xml_file):
             except ValueError:
                 valor_unitario = 0.0
 
+            # LÓGICA DE CÓDIGO NUMÉRICO RANDÔMICO
+            codigo_final = cprod
+            # Se não tem código no XML ou está vazio, gera um numérico único
+            if not codigo_final or codigo_final.strip() == '':
+                codigo_final = gerar_codigo_unico(existing_codes)
+                existing_codes.add(codigo_final)  # Adiciona para evitar duplicatas na mesma importação
+            # Se tem código mas é muito curto (menos de 4 dígitos), também gera um novo
+            elif len(str(codigo_final).strip()) < 4:
+                codigo_final = gerar_codigo_unico(existing_codes)
+                existing_codes.add(codigo_final)
+
             lista_dados.append({
-                'codigo': cprod or None,             # NOVO
+                'codigo': codigo_final,              # Agora sempre tem código
                 'nome': nome,
                 'unidade': unidade,
-                'quantidade':quantidade,
+                'quantidade': quantidade,
                 'valor_unitario': valor_unitario,
-                'data_emissao': data_emissao or None, # NOVO (replicado em cada item)
-                'fornecedor': nome_fornecedor or None,  # 👈 NOVO CAMPO
+                'data_emissao': data_emissao or None,
+                'fornecedor': nome_fornecedor or None,
                 'timestamp': datetime.now().isoformat()
             })
         return lista_dados
@@ -346,7 +390,17 @@ def cadastro():
             quantidade  = float(str(quantidade).replace(",", ".").strip()) if quantidade else None
             valor_unit  = float(str(valor_unit).replace(",", ".").strip()) if valor_unit else None
             unidade     = unidade_in if unidade_in else None
-
+            
+            # Se não informou código, gera um randômico único
+            if not codigo:
+                existing_codes = set()
+                docs = db.collection('itens').select(['codigo']).stream()
+                for doc in docs:
+                    data = doc.to_dict()
+                    if data.get('codigo'):
+                        existing_codes.add(data['codigo'])
+                codigo = gerar_codigo_unico(existing_codes)
+                
             col_itens = db.collection("itens")
             duplicado = False
             
@@ -516,6 +570,7 @@ def meusProdutos():
 #         return jsonify({'error': str(e)}), 500
 
 @app.route('/criar-itens', methods=['POST'])
+@app.route('/criar-itens', methods=['POST'])
 def criar_itens():
     try:
         body = request.get_json(silent=True) or {}
@@ -529,6 +584,17 @@ def criar_itens():
             except Exception:
                 return None
 
+        # Buscar códigos existentes na base ANTES de processar os itens
+        existing_codes = set()
+        try:
+            docs = db.collection('itens').select(['codigo']).stream()
+            for doc in docs:
+                data = doc.to_dict()
+                if data.get('codigo'):
+                    existing_codes.add(str(data['codigo']))
+        except Exception as e:
+            print(f"AVISO: Não foi possível buscar códigos existentes: {e}")
+
         clean = []
         for idx, it in enumerate(itens):
             if not isinstance(it, dict):
@@ -540,14 +606,24 @@ def criar_itens():
             data_emissao = (it.get('data_emissao') or '').strip()
             fornecedor = (it.get('fornecedor') or '').strip()
             codigo = it.get('codigo')
-            codigo = (codigo if codigo not in ('', None) else None)
+            
+            # LÓGICA DE CÓDIGO NUMÉRICO RANDÔMICO
+            codigo_final = codigo
+            # Se não tem código ou está vazio, gera um numérico único
+            if not codigo_final or codigo_final.strip() == '':
+                codigo_final = gerar_codigo_unico(existing_codes)
+                existing_codes.add(codigo_final)  # Adiciona para evitar duplicatas no batch
+            # Se tem código mas é muito curto (menos de 4 dígitos), também gera um novo
+            elif len(str(codigo_final).strip()) < 4:
+                codigo_final = gerar_codigo_unico(existing_codes)
+                existing_codes.add(codigo_final)
 
             if not nome or not unidade or valor_unitario is None or not data_emissao or not fornecedor:
                 return jsonify({'error': f'Campos obrigatórios ausentes no item {idx+1}'}), 400
 
             clean.append({
                 'idx': idx,
-                'codigo': codigo,
+                'codigo': codigo_final,  # Usa o código final (original ou gerado)
                 'nome': nome,
                 'unidade': unidade,
                 'valor_unitario': valor_unitario,
@@ -563,8 +639,9 @@ def criar_itens():
                     .where('valor_unitario', '==', c['valor_unitario'])
                     .where('data_emissao', '==', c['data_emissao'])
                     .where('fornecedor', '==', c['fornecedor']))
-            if c['codigo'] is not None:
-                q = q.where('codigo', '==', c['codigo'])
+            # Sempre verifica pelo código (agora sempre tem código)
+            q = q.where('codigo', '==', c['codigo'])
+            
             exists = next(q.limit(1).stream(), None)
             if exists is not None:
                 conflicts.append({
@@ -606,8 +683,7 @@ def criar_itens():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
+    
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -621,8 +697,182 @@ def produto():
 def upload():
     return render_template('uplaod.html')
 
+@app.route('/upload-arquivo', methods=['POST'])
+def upload_arquivo():
+    if 'xmlFile' not in request.files:
+        return jsonify({'error': 'Nenhum arquivo enviado'}), 400
+
+    file = request.files['xmlFile']
+    if not file or file.filename == '':
+        return jsonify({'error': 'Nome de arquivo vazio'}), 400
+
+    filename_lower = file.filename.lower()
+    
+    if not (filename_lower.endswith('.xml') or filename_lower.endswith('.pdf')):
+        return jsonify({'error': 'Formato de arquivo inválido. Use XML ou PDF.'}), 400
+
+    os.makedirs('temp', exist_ok=True)
+    temp_path = os.path.join('temp', secure_filename(file.filename))
+    
+    try:
+        file.save(temp_path)
+        app.logger.info(f'Arquivo {file.filename} salvo temporariamente')
+
+        # Processar de acordo com o tipo de arquivo
+        if filename_lower.endswith('.xml'):
+            app.logger.info("Processando como XML")
+            dados = extrair_dados_xml(temp_path)
+        else:
+            app.logger.info("Processando como PDF")
+            dados = extrair_dados_pdf(temp_path)
+            
+            # DEBUG: Log dos dados extraídos do PDF
+            if isinstance(dados, list):
+                app.logger.info(f"Dados extraídos do PDF: {len(dados)} itens")
+                for i, item in enumerate(dados):
+                    app.logger.info(f"Item {i}: {item.get('nome', 'Sem nome')} - R$ {item.get('valor_unitario', 0)}")
+            else:
+                app.logger.info(f"Erro no PDF: {dados}")
+
+        # Verificar se retornou erro
+        if isinstance(dados, dict) and 'error' in dados:
+            app.logger.error(f"Erro no processamento: {dados['error']}")
+            return jsonify({'error': dados['error']}), 400
+            
+        app.logger.info(f"Processamento bem-sucedido: {len(dados)} itens encontrados")
+        return jsonify(dados), 200
+        
+    except Exception as e:
+        app.logger.error(f"Erro no upload: {str(e)}", exc_info=True)
+        return jsonify({'error': f'Erro interno no servidor: {str(e)}'}), 500
+    finally:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except Exception as e:
+            app.logger.warning(f"Erro ao remover arquivo temporário: {e}")
+            
+@app.route('/debug-pdf', methods=['POST'])
+def debug_pdf():
+    """
+    Rota para debug - mostra exatamente o que o pdfplumber está vendo
+    """
+    if 'xmlFile' not in request.files:
+        return jsonify({'error': 'Nenhum arquivo enviado'}), 400
+
+    file = request.files['xmlFile']
+    if not file or file.filename == '':
+        return jsonify({'error': 'Nome de arquivo vazio'}), 400
+
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({'error': 'Apenas PDF permitido'}), 400
+
+    os.makedirs('temp', exist_ok=True)
+    temp_path = os.path.join('temp', secure_filename(file.filename))
+    
+    try:
+        file.save(temp_path)
+        
+        with pdfplumber.open(temp_path) as pdf:
+            primeira_pagina = pdf.pages[0]
+            
+            # Extrair texto completo
+            texto_completo = primeira_pagina.extract_text()
+            
+            # Extrair tabelas
+            tabelas = primeira_pagina.extract_tables()
+            
+            # Extrair palavras com coordenadas
+            palavras = primeira_pagina.extract_words()
+            
+            debug_info = {
+                'texto_completo': texto_completo,
+                'numero_tabelas': len(tabelas),
+                'tabelas': [],
+                'palavras': palavras[:50]  # Primeiras 50 palavras
+            }
+            
+            for i, tabela in enumerate(tabelas):
+                debug_info['tabelas'].append({
+                    'indice': i,
+                    'numero_linhas': len(tabela),
+                    'cabecalho': tabela[0] if tabela else [],
+                    'primeiras_linhas': tabela[1:4] if len(tabela) > 1 else []
+                })
+            
+            return jsonify(debug_info)
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except:
+            pass
+        
+@app.route('/teste-pdf', methods=['POST'])
+def teste_pdf():
+    """
+    Rota para testar extração específica do PDF
+    """
+    if 'xmlFile' not in request.files:
+        return jsonify({'error': 'Nenhum arquivo enviado'}), 400
+
+    file = request.files['xmlFile']
+    if not file or file.filename == '':
+        return jsonify({'error': 'Nome de arquivo vazio'}), 400
+
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({'error': 'Apenas PDF permitido'}), 400
+
+    os.makedirs('temp', exist_ok=True)
+    temp_path = os.path.join('temp', secure_filename(file.filename))
+    
+    try:
+        file.save(temp_path)
+        
+        with pdfplumber.open(temp_path) as pdf:
+            primeira_pagina = pdf.pages[0]
+            texto_completo = primeira_pagina.extract_text()
+            
+            # Mostrar estrutura das tabelas
+            tabelas = primeira_pagina.extract_tables()
+            info_tabelas = []
+            
+            for i, tabela in enumerate(tabelas):
+                info_tabelas.append({
+                    'indice': i,
+                    'numero_colunas': len(tabela[0]) if tabela else 0,
+                    'numero_linhas': len(tabela),
+                    'cabecalho': tabela[0] if tabela else [],
+                    'primeira_linha_dados': tabela[1] if len(tabela) > 1 else []
+                })
+            
+            # Tentar extrair produtos
+            from pdf_processor import extrair_dados_pdf
+            produtos = extrair_dados_pdf(temp_path)
+            
+            resultado = {
+                'texto_amostra': texto_completo[:1000] + "..." if len(texto_completo) > 1000 else texto_completo,
+                'tabelas_encontradas': info_tabelas,
+                'produtos_extraidos': produtos if isinstance(produtos, list) else produtos
+            }
+            
+            return jsonify(resultado)
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except:
+            pass
+
 @app.route('/upload-xml', methods=['POST'])
 def upload_xml():
+    """Rota legada para compatibilidade - apenas XML"""
     if 'xmlFile' not in request.files:
         return jsonify({'error': 'Nenhum arquivo enviado'}), 400
 
@@ -631,7 +881,7 @@ def upload_xml():
         return jsonify({'error': 'Nome de arquivo vazio'}), 400
 
     if not file.filename.lower().endswith('.xml'):
-        return jsonify({'error': 'Formato de arquivo inválido'}), 400
+        return jsonify({'error': 'Formato de arquivo inválido. Use XML.'}), 400
 
     os.makedirs('temp', exist_ok=True)
     temp_path = os.path.join('temp', secure_filename(file.filename))
@@ -650,7 +900,7 @@ def upload_xml():
                 os.remove(temp_path)
         except Exception:
             pass
-
+        
 @app.route('/criar-produto', methods=['POST'])
 def criar_produto():
     try:
@@ -879,4 +1129,3 @@ def listar_itens_view():
     return render_template('listar_itens.html')
 if __name__ == '__main__':
     app.run(debug=True)
-
