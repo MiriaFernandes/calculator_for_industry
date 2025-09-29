@@ -7,6 +7,8 @@ from datetime import datetime
 from werkzeug.utils import secure_filename  # <- IMPORT NECESSÁRIO
 from google.cloud.firestore_v1 import FieldFilter  # opcional, não usamos embaixo-
 from dotenv import load_dotenv  # <- NOVO IMPORT
+from decimal import Decimal
+import re
 # Carrega variáveis do .envcd
 load_dotenv()
 app = Flask(__name__)
@@ -56,6 +58,70 @@ def _find_nfe_root(root):
             return elem
 
     return None
+def _find_text_anywhere(element, local_name):
+    """Busca texto de uma tag ignorando namespaces."""
+    if element is None:
+        return ''
+    # Busca direta usando o namespace conhecido
+    found = element.find(f'nfe:{local_name}', NS)
+    if found is not None and found.text:
+        return found.text
+    # Fallback: percorre todas as tags procurando pelo localName
+    for elem in element.iter():
+        if elem.tag.split('}')[-1] == local_name and elem.text:
+            return elem.text
+    return ''
+
+def extrair_identificadores_nfe(xml_file):
+    """Retorna (cnpj, numero_nota) extraídos do XML."""
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+    nfe_root = _find_nfe_root(root)
+    if nfe_root is None:
+        raise ValueError('Arquivo XML não é uma NFe válida (NFe não encontrada)')
+    infNFe = nfe_root.find('nfe:infNFe', NS)
+    if infNFe is None:
+        raise ValueError('Estrutura XML inválida - tag infNFe não encontrada')
+    ide = infNFe.find('nfe:ide', NS)
+    emit = infNFe.find('nfe:emit', NS)
+    numero_nota = _find_text_anywhere(ide, 'nNF').strip()
+    cnpj = _find_text_anywhere(emit, 'CNPJ').strip()
+    # Normaliza removendo caracteres não numéricos
+    cnpj_digits = ''.join(ch for ch in cnpj if ch.isdigit())
+    numero_digits = ''.join(ch for ch in numero_nota if ch.isdigit()) or numero_nota
+    if not cnpj_digits or not numero_digits:
+        raise ValueError('Não foi possível identificar CNPJ ou número da nota fiscal no XML enviado.')
+    return cnpj_digits, numero_digits
+
+def process_xml_file(temp_path, original_filename, *, db_client=None, logger=None):
+    """Processa um XML de NF-e verificando duplicidade e retornando dados estruturados."""
+    db_client = db_client or db
+    try:
+        cnpj, numero_nota = extrair_identificadores_nfe(temp_path)
+    except ValueError as exc:
+        return 400, {'error': str(exc)}
+    doc_id = f"{cnpj}-{numero_nota}"
+    notas_collection = db_client.collection('notas_fiscais')
+    doc_ref = notas_collection.document(doc_id)
+    existing = doc_ref.get()
+    if hasattr(existing, 'exists') and existing.exists:
+        return 409, {'error': 'Nota fiscal já cadastrada para este CNPJ e número.'}
+    dados = extrair_dados_xml(temp_path)
+    if isinstance(dados, dict) and dados.get('error'):
+        return 400, dados
+    if logger is not None:
+        try:
+            logger.info('Registrando nota fiscal %s - %s', cnpj, numero_nota)
+        except Exception:
+            pass
+    doc_ref.set({
+        'cnpj': cnpj,
+        'numero_nota': numero_nota,
+        'arquivo_original': original_filename,
+        'criado_em': firestore.SERVER_TIMESTAMP
+    })
+    return 200, {'itens': dados, 'nota': {'cnpj': cnpj, 'numero': numero_nota}}
+
 
 def extrair_dados_xml(xml_file):
     try:
@@ -129,21 +195,100 @@ def listar_itens():
         col = db.collection('itens')
 
         # BUSCA GLOBAL (ignora paginação)
+        # if q:
+        #     qnorm = q.casefold()
+        #     docs = list(col.order_by('data_criacao', direction=firestore.Query.DESCENDING).limit(1000).stream())
+        #     items = []
+        #     for d in docs:
+        #         data = d.to_dict() or {}
+        #         nome = (data.get('nome') or '').casefold()
+        #         codigo = str(data.get('codigo') or '').casefold()
+        #         if qnorm in nome or qnorm in codigo:
+        #             data['id'] = d.id
+        #             items.append(data)
+        #         if len(items) >= limit:
+        #             break
+        #     return jsonify({'items': items, 'next_cursor': None}), 200
+        def extrair_preco(data):
+            try:
+                return Decimal(str(data.get('preco') or '0'))
+            except:
+                return Decimal('0')
+        def extrair_data(data):
+            try:
+                return str(data.get('data_criacao') or '')
+            except:
+                return ''
+        def normalizar_nome(nome):
+            nome = nome.casefold()  # tudo minúsculo
+            nome = nome.replace(',', '.')  # troca vírgula por ponto
+            nome = re.sub(r'\s+', ' ', nome)  # remove espaços duplicados
+            nome = re.sub(r'(\d+,\d+|\d+\.\d+)(mm)', r'\1 mm', nome)  # garante espaço antes de mm
+            nome = nome.strip()
+            return nome
         if q:
             qnorm = q.casefold()
             docs = list(col.order_by('data_criacao', direction=firestore.Query.DESCENDING).limit(1000).stream())
-            items = []
+
+            melhores_por_nome = {}
+
             for d in docs:
                 data = d.to_dict() or {}
                 nome = (data.get('nome') or '').casefold()
                 codigo = str(data.get('codigo') or '').casefold()
-                if qnorm in nome or qnorm in codigo:
-                    data['id'] = d.id
-                    items.append(data)
-                if len(items) >= limit:
-                    break
-            return jsonify({'items': items, 'next_cursor': None}), 200
+                preco = extrair_preco(data)
+                data_criacao = extrair_data(data)
 
+                if qnorm in nome or qnorm in codigo:
+                    chave = normalizar_nome(nome)
+                    atual = melhores_por_nome.get(chave)
+
+                    if not atual:
+                        data['id'] = d.id
+                        melhores_por_nome[chave] = data
+                    else:
+                        atual_data = extrair_data(atual)
+                        atual_preco = extrair_preco(atual)
+
+                        # Se o novo é mais recente, substitui
+                        if data_criacao > atual_data:
+                            data['id'] = d.id
+                            melhores_por_nome[chave] = data
+                        # Se a data é igual, pega o de maior valor
+                        elif data_criacao == atual_data and preco > atual_preco:
+                            data['id'] = d.id
+                            melhores_por_nome[chave] = data
+
+                if len(melhores_por_nome) >= limit:
+                    break
+
+            items = list(melhores_por_nome.values())
+            print('Itens renderizados na busca:')
+            for item in melhores_por_nome.values():
+                print(f"- {item.get('nome')} | Código: {item.get('codigo')} | Preço: {item.get('preco')} | Data: {item.get('data_criacao')}")
+
+            return jsonify({'items': items, 'next_cursor': None}), 200
+        # PAGINADO
+        # query = col.order_by('data_criacao', direction=firestore.Query.DESCENDING).limit(limit + 1)
+
+        # if cursor_id:
+        #     snap = col.document(cursor_id).get()
+        #     if snap.exists:
+        #         query = query.start_after(snap)
+
+        # docs_full = list(query.stream())
+        # has_more = len(docs_full) > limit
+        # docs = docs_full[:limit]
+
+        # items = []
+        # for d in docs:
+        #     data = d.to_dict() or {}
+        #     data['id'] = d.id
+        #     items.append(data)
+
+        # next_cursor = docs[-1].id if (has_more and docs) else None
+        # return jsonify({'items': items, 'next_cursor': next_cursor}), 200
+        
         # PAGINADO
         query = col.order_by('data_criacao', direction=firestore.Query.DESCENDING).limit(limit + 1)
 
@@ -153,17 +298,27 @@ def listar_itens():
                 query = query.start_after(snap)
 
         docs_full = list(query.stream())
-        has_more = len(docs_full) > limit
-        docs = docs_full[:limit]
 
+        vistos = set()
         items = []
-        for d in docs:
+
+        for d in docs_full:
             data = d.to_dict() or {}
+            codigo = str(data.get('codigo') or '').casefold()
+
+            if codigo in vistos:
+                continue
+            vistos.add(codigo)
+
             data['id'] = d.id
             items.append(data)
 
-        next_cursor = docs[-1].id if (has_more and docs) else None
+            if len(items) >= limit:
+                break
+
+        next_cursor = docs_full[-1].id if (len(docs_full) > limit and docs_full) else None
         return jsonify({'items': items, 'next_cursor': next_cursor}), 200
+
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -191,6 +346,26 @@ def cadastro():
             quantidade  = float(str(quantidade).replace(",", ".").strip()) if quantidade else None
             valor_unit  = float(str(valor_unit).replace(",", ".").strip()) if valor_unit else None
             unidade     = unidade_in if unidade_in else None
+
+            col_itens = db.collection("itens")
+            duplicado = False
+            
+            try:
+                q = (col_itens
+                        .where("nome", "==", nome)
+                        .where("valor_unitario", "==", valor_unit)
+                        .where("data_compra", "==", data_compra)
+                        .limit(1)
+                    )
+                existe = next(q.stream(), None)
+                if existe is not None:
+                    duplicado = True
+            except Exception as e:
+                print("[ERRO DUPLICIDADE]", e)
+
+            if duplicado:
+                flash("Produto duplicado: já existe um cadastro com mesmo Nome, Valor e Data.", "danger")
+                return render_template("cadastro.html")
 
             doc_ref = db.collection("itens").document()
 

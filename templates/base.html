@@ -20,24 +20,7 @@
 
   <!-- Estilos específicos da página -->
   {% block styles %}{% endblock %}
-  <!-- <style>
-    .login-modal-content {
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-    }
 
-    .login-input-field {
-      border: 1px solid #d1d5db;
-      background-color: #f9fafb;
-      padding: 10px 12px;
-    }
-
-    .login-input-field:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-    }
-  </style> -->
 </head>
 
 <body class="flex flex-col min-h-screen">
@@ -55,7 +38,7 @@
         <li><a href="{{ url_for('index') }}" id="link-calculadora">Calculadora</a></li>
         <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a></li> -->
         <li><a href="{{ url_for('meusProdutos') }}">Produtos Finais</a></li>
-        <li><a href="{{ url_for('listar_itens_view') }}">Matérias-Primas</a></li>
+        <li><a href="{{ url_for('listar_materiais') }}">Matérias-Primas</a></li>
       </ul>
 
       <div class="flex items-center space-x-4">
