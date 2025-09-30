@@ -29,7 +29,10 @@
   <header class="absolute top-0 left-0 right-0 z-50 bg-transparent px-6 py-3 app-navbar nav-link">
     <!-- Menu desktop -->
     <nav class="flex items-center justify-between">
-      <img src="/static/image/logotipo-red.svg"  href="{{ url_for('index') }}" alt="Logo da Empresa" class="h-12 w-auto logo">
+      <a href="{{ url_for('index') }}">
+        <img src="/static/image/logotipo-red.svg" alt="Logo da Empresa" class="h-12 w-auto logo">
+      </a>
+      <!-- <img src="/static/image/logotipo-red.svg"  href="{{ url_for('index') }}" alt="Logo da Empresa" class="h-12 w-auto logo"> -->
 
       <ul class="hidden lg:flex space-x-6 navbar-links">
         <!-- <li><a href="{{ url_for('index') }}">Dashboard</a></li> -->
@@ -70,7 +73,7 @@
         <!-- <a href="{{ url_for('index') }}">Dashboard</a> -->
         <a Href="{{ url_for('upload') }}">Upload Nota Fiscal</a>
         <a href="{{ url_for('cadastro') }}">Cadastro Manual</a>
-        <a  href="{{ url_for('index') }}">Calculadora</a>
+        <a href="{{ url_for('index') }}">Calculadora</a>
         <!-- <li><a href="{{ url_for('produto') }}">Produtos Finais</a> </li>-->
         <a href="{{ url_for('meusProdutos') }}">Produtos Finais</a>
         <a href="{{ url_for('listar_materiais') }}">Matérias-Primas</a>
